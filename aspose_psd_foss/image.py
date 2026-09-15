@@ -1,7 +1,7 @@
 import abc
-from aspose_psd_foss.rectangle import Rectangle
-from aspose_psd_foss.psd_image import PsdImage
 
+from aspose_psd_foss.psdimage import PsdImage
+from aspose_psd_foss.rectangle import Rectangle
 
 # Provides the Aspose.PSD-compatible base image entry point for loading PSD/PSB documents.
 

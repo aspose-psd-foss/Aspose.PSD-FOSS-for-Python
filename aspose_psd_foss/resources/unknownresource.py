@@ -1,6 +1,6 @@
-from aspose_psd_foss.big_endian_reader import BigEndianReader
-from aspose_psd_foss.psd_resource_info import PsdResourceInfo
-from aspose_psd_foss.psd_resource_kind import PsdResourceKind
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.resources.psdresourceinfo import PsdResourceInfo
+from aspose_psd_foss.resources.psdresourcekind import PsdResourceKind
 
 
 class UnknownResource:

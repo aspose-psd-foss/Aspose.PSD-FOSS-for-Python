@@ -1,4 +1,4 @@
-from aspose_psd_foss.imagedatakind import ImageDataKind
+from aspose_psd_foss.sections.imagedatakind import ImageDataKind
 
 
 class ImageDataStructure:

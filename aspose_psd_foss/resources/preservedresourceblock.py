@@ -1,9 +1,8 @@
 # aspose_psd_foss/src/resources/preserved_resource_block.py
-
-from aspose_psd_foss.resource_block import ResourceBlock
-from aspose_psd_foss.resources.unknown_resource import UnknownResource
-from aspose_psd_foss.psd_version import PsdVersion
-from aspose_psd_foss.stream_container import StreamContainer
+from aspose_psd_foss.psdversion import PsdVersion
+from aspose_psd_foss.resourceblock import ResourceBlock
+from aspose_psd_foss.resources.unknownresource import UnknownResource
+from aspose_psd_foss.streamcontainer import StreamContainer
 
 
 class PreservedResourceBlock(ResourceBlock):

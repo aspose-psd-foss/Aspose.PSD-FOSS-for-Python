@@ -3,8 +3,8 @@ from __future__ import annotations
 import math
 
 from aspose_psd_foss.point import Point
+from aspose_psd_foss.rectanglef import RectangleF
 from aspose_psd_foss.size import Size
-from aspose_psd_foss.rectangle_f import RectangleF
 
 
 class Rectangle:

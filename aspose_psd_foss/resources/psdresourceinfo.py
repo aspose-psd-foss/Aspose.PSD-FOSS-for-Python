@@ -1,5 +1,5 @@
 # Provides a read-only summary of one parsed PSD image resource block.
-from aspose_psd_foss.psdresourcekind import PsdResourceKind
+from aspose_psd_foss.resources.psdresourcekind import PsdResourceKind
 
 
 class PsdResourceInfo:

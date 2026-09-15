@@ -3,10 +3,10 @@ from __future__ import annotations
 import io
 from typing import List
 
-from aspose_psd_foss.big_endian_reader import BigEndianReader
-from aspose_psd_foss.big_endian_writer import BigEndianWriter
-from aspose_psd_foss.psd_section_reader import PsdSectionReader
-from aspose_psd_foss.resources.unknown_resource import UnknownResource
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.bigendianwriter import BigEndianWriter
+from aspose_psd_foss.psdsectionreader import PsdSectionReader
+from aspose_psd_foss.resources.unknownresource import UnknownResource
 
 
 class ImageResourcesSection:

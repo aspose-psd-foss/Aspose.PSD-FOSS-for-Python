@@ -1,4 +1,4 @@
-from aspose_psd_foss.blend_mode import BlendMode
+from aspose_psd_foss.layers.blendmode import BlendMode
 
 # Maps between PSD blend mode keys and the public BlendMode enum.
 # internal static class LayerBlendModeMapper

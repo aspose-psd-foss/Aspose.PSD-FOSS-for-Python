@@ -1,15 +1,12 @@
-from aspose_psd_foss.big_endian_reader import BigEndianReader
-from aspose_psd_foss.core_exceptions.psd_load_exception import PsdLoadException
-from aspose_psd_foss.layers.blend_mode import BlendMode
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
 from aspose_psd_foss.layers.layer import Layer
-from aspose_psd_foss.layers.layer_blend_mode_mapper import LayerBlendModeMapper
-from aspose_psd_foss.layers.layer_channel_info import LayerChannelInfo
-from aspose_psd_foss.layers.layer_raw_data import LayerRawData
-from aspose_psd_foss.layers.raw_layer_blending_ranges_section import RawLayerBlendingRangesSection
-from aspose_psd_foss.layers.raw_layer_mask_section import RawLayerMaskSection
-from aspose_psd_foss.psd_section_reader import PsdSectionReader
+from aspose_psd_foss.layers.layerblendmodemapper import parse_blend_mode_key
+from aspose_psd_foss.layers.layerchannelinfo import LayerChannelInfo
+from aspose_psd_foss.layers.rawlayerblendingrangessection import RawLayerBlendingRangesSection
+from aspose_psd_foss.layers.rawlayermasksection import RawLayerMaskSection
+from aspose_psd_foss.psdsectionreader import PsdSectionReader
 from aspose_psd_foss.rectangle import Rectangle
-
 
 _ADOBE_LAYER_SIGNATURE = 0x3842494D
 _ADOBE_LAYER_SIGNATURE_TEXT = "8BIM"
@@ -48,7 +45,7 @@ class LayerRecordReader:
 
         blend_mode_key = reader.read_bytes(4)
         original_blend_mode_key = blend_mode_key.decode("ascii")
-        blend_mode = LayerBlendModeMapper.parse_blend_mode_key(blend_mode_key)
+        blend_mode = parse_blend_mode_key(blend_mode_key)
 
         opacity = reader.read_byte()
         clipping = reader.read_byte()

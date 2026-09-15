@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import abc
 
+from aspose_psd_foss.layers.layermaskflags import LayerMaskFlags
 from aspose_psd_foss.rectangle import Rectangle
-from aspose_psd_foss.layer_mask_flags import LayerMaskFlags
-
 
 class LayerMaskData(abc.ABC):
     """

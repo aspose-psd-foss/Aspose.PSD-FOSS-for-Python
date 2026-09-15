@@ -1,8 +1,7 @@
 """Stores the raw layer mask subsection including its leading length field."""
-
-from aspose_psd_foss.big_endian_reader import BigEndianReader
-from aspose_psd_foss.psd_section_reader import PsdSectionReader
-from aspose_psd_foss.core_exceptions.psd_load_exception import PsdLoadException
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
+from aspose_psd_foss.psdsectionreader import PsdSectionReader
 
 
 class RawLayerMaskSection:

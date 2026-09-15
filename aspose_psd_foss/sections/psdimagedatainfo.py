@@ -1,5 +1,6 @@
 from typing import Tuple, Sequence
-from aspose_psd_foss.image_data_kind import ImageDataKind
+
+from aspose_psd_foss.sections.imagedatakind import ImageDataKind
 
 
 class PsdImageDataInfo:

@@ -1,6 +1,6 @@
 import struct
 
-from aspose_psd_foss.core_exceptions.psd_load_exception import PsdLoadException
+from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
 
 
 class BigEndianReader:

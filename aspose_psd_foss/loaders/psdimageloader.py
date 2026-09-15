@@ -1,13 +1,14 @@
 # loads parsed psd/psb document state from a stream.
 import sys
-from aspose_psd_foss.sections.psd_image_document_state import PsdImageDocumentState
-from aspose_psd_foss.big_endian_reader import BigEndianReader
-from aspose_psd_foss.sections.psd_header import PsdHeader
-from aspose_psd_foss.sections.color_data import ColorData
-from aspose_psd_foss.sections.image_resources_section import ImageResourcesSection
-from aspose_psd_foss.sections.layer_and_mask_section import LayerAndMaskSection
-from aspose_psd_foss.sections.image_data import ImageData
-from aspose_psd_foss.core_exceptions.psd_load_exception import PsdLoadException
+
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
+from aspose_psd_foss.sections.colordata import ColorData
+from aspose_psd_foss.sections.imagedata import ImageData
+from aspose_psd_foss.sections.imageresourcessection import ImageResourcesSection
+from aspose_psd_foss.sections.layerandmasksection import LayerAndMaskSection
+from aspose_psd_foss.sections.psdheader import PsdHeader
+from aspose_psd_foss.sections.psdimagedocumentstate import PsdImageDocumentState
 
 
 def load(stream, leave_open):

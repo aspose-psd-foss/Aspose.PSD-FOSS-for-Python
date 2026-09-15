@@ -1,4 +1,8 @@
 # Stores the raw blending ranges subsection including its leading length field.
+from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
+from aspose_psd_foss.psdsectionreader import PsdSectionReader
+
+
 class RawLayerBlendingRangesSection:
     """Stores the raw blending ranges subsection including its leading length field."""
 
@@ -33,10 +37,6 @@ class RawLayerBlendingRangesSection:
         Returns:
             The loaded RawLayerBlendingRangesSection instance.
         """
-        from aspose_psd_foss.big_endian_reader import BigEndianReader
-        from aspose_psd_foss.psd_section_reader import PsdSectionReader
-        from aspose_psd_foss.core_exceptions.psd_load_exception import PsdLoadException
-
         length = reader.read_uint32()
         payload_length = PsdSectionReader.get_nested_memory_backed_length(
             reader,

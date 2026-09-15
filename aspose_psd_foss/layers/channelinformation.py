@@ -1,7 +1,5 @@
 from aspose_psd_foss.compressionmethod import CompressionMethod
 from aspose_psd_foss.psdversion import PsdVersion
-from aspose_psd_foss.layerchannelinfo import LayerChannelInfo
-
 
 class ChannelInformation:
     def __init__(self, compression_method, _bit_depth, psd_version):

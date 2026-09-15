@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from aspose_psd_foss.indexedcolorpaletteinfo import IndexedColorPaletteInfo
+from aspose_psd_foss.resources.indexedcolorpaletteinfo import IndexedColorPaletteInfo
 
 
 class IndexedColorPalette:

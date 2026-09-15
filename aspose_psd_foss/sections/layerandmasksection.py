@@ -1,9 +1,8 @@
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.bigendianwriter import BigEndianWriter
+from aspose_psd_foss.layerandmasksectionreader import LayerAndMaskSectionReader
+from aspose_psd_foss.layerandmasksectionwriter import LayerAndMaskSectionWriter
 from aspose_psd_foss.layers.layer import Layer
-from aspose_psd_foss.big_endian_reader import BigEndianReader
-from aspose_psd_foss.big_endian_writer import BigEndianWriter
-from aspose_psd_foss.layer_and_mask_section_reader import LayerAndMaskSectionReader
-from aspose_psd_foss.layer_and_mask_section_writer import LayerAndMaskSectionWriter
-
 
 class LayerAndMaskSection:
     # Gets an empty Layer and Mask Information section.

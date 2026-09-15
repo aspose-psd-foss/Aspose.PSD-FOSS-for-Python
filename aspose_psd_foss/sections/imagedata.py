@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from aspose_psd_foss.big_endian_reader import BigEndianReader
-from aspose_psd_foss.big_endian_writer import BigEndianWriter
-from aspose_psd_foss.compression_method import CompressionMethod
-from aspose_psd_foss.core_exceptions.psd_load_exception import PsdLoadException
-from aspose_psd_foss.psd_section_reader import PsdSectionReader
-from aspose_psd_foss.image_data_structure import ImageDataStructure
-from aspose_psd_foss.psd_image_data_info import PsdImageDataInfo
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.bigendianwriter import BigEndianWriter
+from aspose_psd_foss.compressionmethod import CompressionMethod
+from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
+from aspose_psd_foss.psdsectionreader import PsdSectionReader
+from aspose_psd_foss.sections.imagedatastructure import ImageDataStructure
+from aspose_psd_foss.sections.psdimagedatainfo import PsdImageDataInfo
 
 
 class ImageData:

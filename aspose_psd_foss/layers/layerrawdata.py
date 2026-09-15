@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from typing import List
 
-from aspose_psd_foss.layer_blend_mode_mapper import LayerBlendModeMapper
-from aspose_psd_foss.raw_layer_mask_section import RawLayerMaskSection
-from aspose_psd_foss.raw_layer_blending_ranges_section import RawLayerBlendingRangesSection
-from aspose_psd_foss.layer_channel_info import LayerChannelInfo
+from aspose_psd_foss.layers.layerchannelinfo import LayerChannelInfo
+from aspose_psd_foss.layers.rawlayerblendingrangessection import RawLayerBlendingRangesSection
+from aspose_psd_foss.layers.rawlayermasksection import RawLayerMaskSection
 
 
 class LayerRawData:

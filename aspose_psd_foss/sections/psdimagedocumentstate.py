@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-
-from aspose_psd_foss.compression_method import CompressionMethod
-from aspose_psd_foss.color_data import ColorData
-from aspose_psd_foss.image_data import ImageData
-from aspose_psd_foss.image_resources_section import ImageResourcesSection
-from aspose_psd_foss.layer_and_mask_section import LayerAndMaskSection
-from aspose_psd_foss.psd_header import PsdHeader
+from aspose_psd_foss.sections.colordata import ColorData
+from aspose_psd_foss.sections.imagedata import ImageData
+from aspose_psd_foss.sections.imageresourcessection import ImageResourcesSection
+from aspose_psd_foss.sections.layerandmasksection import LayerAndMaskSection
+from aspose_psd_foss.sections.psdheader import PsdHeader
 
 
 class PsdImageDocumentState:

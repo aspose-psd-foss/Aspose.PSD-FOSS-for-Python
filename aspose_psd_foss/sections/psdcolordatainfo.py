@@ -1,5 +1,5 @@
-from aspose_psd_foss.sections.psd_color_data_kind import PsdColorDataKind
-from aspose_psd_foss.resources.indexed_color_palette_info import IndexedColorPaletteInfo
+from aspose_psd_foss.resources.indexedcolorpaletteinfo import IndexedColorPaletteInfo
+from aspose_psd_foss.sections.psdcolordatakind import PsdColorDataKind
 
 
 class PsdColorDataInfo:

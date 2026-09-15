@@ -1,8 +1,6 @@
-from aspose_psd_foss.color_modes import ColorModes
-from aspose_psd_foss.psd_version import PsdVersion
-from aspose_psd_foss.big_endian_reader import BigEndianReader
-from aspose_psd_foss.core_exceptions.psd_load_exception import PsdLoadException
-from aspose_psd_foss.big_endian_writer import BigEndianWriter
+from aspose_psd_foss.colormodes import ColorModes
+from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
+from aspose_psd_foss.psdversion import PsdVersion
 
 
 class PsdHeader:

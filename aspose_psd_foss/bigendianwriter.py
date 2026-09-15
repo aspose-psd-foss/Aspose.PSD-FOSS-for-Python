@@ -1,6 +1,6 @@
 import io
 
-from aspose_psd_foss.core_exceptions.psd_save_exception import PsdSaveException
+from aspose_psd_foss.coreexceptions.psdsaveexception import PsdSaveException
 
 
 class BigEndianWriter:

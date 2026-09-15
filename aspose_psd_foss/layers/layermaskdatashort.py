@@ -1,4 +1,4 @@
-from aspose_psd_foss.layer_mask_data import LayerMaskData
+from aspose_psd_foss.layers.layermaskdata import LayerMaskData
 
 
 class LayerMaskDataShort(LayerMaskData):

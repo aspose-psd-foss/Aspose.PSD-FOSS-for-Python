@@ -1,13 +1,12 @@
 """Stores the PSD Color Mode Data section as raw bytes plus mode-aware parsed
 structure when available."""
-
-from aspose_psd_foss.big_endian_reader import BigEndianReader
-from aspose_psd_foss.big_endian_writer import BigEndianWriter
-from aspose_psd_foss.color_modes import ColorModes
-from aspose_psd_foss.psd_section_reader import PsdSectionReader
-from aspose_psd_foss.psd_color_data_kind import PsdColorDataKind
-from aspose_psd_foss.resources.indexed_color_palette import IndexedColorPalette
-from aspose_psd_foss.sections.psd_color_data_info import PsdColorDataInfo
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.bigendianwriter import BigEndianWriter
+from aspose_psd_foss.colormodes import ColorModes
+from aspose_psd_foss.psdsectionreader import PsdSectionReader
+from aspose_psd_foss.resources.indexedcolorpalette import IndexedColorPalette
+from aspose_psd_foss.sections.psdcolordatainfo import PsdColorDataInfo
+from aspose_psd_foss.sections.psdcolordatakind import PsdColorDataKind
 
 
 class ColorData:

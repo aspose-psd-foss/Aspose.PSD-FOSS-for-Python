@@ -1,5 +1,5 @@
-from aspose_psd_foss.big_endian_writer import BigEndianWriter
-from aspose_psd_foss.layer import Layer
+from aspose_psd_foss.bigendianwriter import BigEndianWriter
+from aspose_psd_foss.layers.layer import Layer
 
 
 class LayerRecordWriter:

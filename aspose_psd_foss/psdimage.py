@@ -1,26 +1,27 @@
 import io
 from typing import List, Optional, Sequence
 
+from aspose.psd.fileformats.psd.resources import UnknownResource
+
+from aspose_psd_foss.colormodes import ColorModes
+from aspose_psd_foss.compressionmethod import CompressionMethod
 from aspose_psd_foss.image import Image
-from aspose_psd_foss.color_modes import ColorModes
-from aspose_psd_foss.sections.psd_header import PsdHeader
+from aspose_psd_foss.layers.globallayermaskinfo import GlobalLayerMaskInfo
+
 from aspose_psd_foss.layers.layer import Layer
+from aspose_psd_foss.layers.layerresource import LayerResource
+from aspose_psd_foss.resourceblock import ResourceBlock
+from aspose_psd_foss.resources.indexedcolorpaletteinfo import IndexedColorPaletteInfo
+from aspose_psd_foss.resources.preservedresourceblock import PreservedResourceBlock
+from aspose_psd_foss.resources.psdresourceinfo import PsdResourceInfo
+from aspose_psd_foss.sections.colordata import ColorData
+from aspose_psd_foss.sections.imagedatakind import ImageDataKind
+from aspose_psd_foss.sections.psdcolordatainfo import PsdColorDataInfo
+from aspose_psd_foss.sections.psdheader import PsdHeader
+from aspose_psd_foss.sections.psdimagedatainfo import PsdImageDataInfo
+from aspose_psd_foss.sections.psdimagedocumentstate import PsdImageDocumentState
 from aspose_psd_foss.size import Size
-from aspose_psd_foss.resource_block import ResourceBlock
-from aspose_psd_foss.resources.preserved_resource_block import PreservedResourceBlock
-from aspose_psd_foss.layers.layer_resource import LayerResource
-from aspose_psd_foss.layers.global_layer_mask_info import GlobalLayerMaskInfo
-from aspose_psd_foss.resources.psd_resource_info import PsdResourceInfo
-from aspose_psd_foss.sections.psd_color_data_info import PsdColorDataInfo
-from aspose_psd_foss.resources.indexed_color_palette_info import IndexedColorPaletteInfo
-from aspose_psd_foss.compression_method import CompressionMethod
-from aspose_psd_foss.sections.psd_image_data_info import PsdImageDataInfo
-from aspose_psd_foss.sections.image_data_kind import ImageDataKind
-from aspose_psd_foss.sections.color_data import ColorData
-from aspose_psd_foss.resources.unknown_resource import UnknownResource
-from aspose_psd_foss.sections.psd_image_document_state import PsdImageDocumentState
-from aspose_psd_foss.loaders.psd_image_loader import PsdImageLoader
-from aspose_psd_foss.write_descriptors.psd_image_writer import PsdImageWriter
+
 
 
 class PsdImage(Image):

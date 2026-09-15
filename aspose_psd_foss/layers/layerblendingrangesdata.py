@@ -47,4 +47,4 @@ class LayerBlendingRangesData:
 
 
 # Import after class definition to avoid circular imports if any.
-from aspose_psd_foss.blend_range import BlendRange
+#from aspose_psd_foss.blend_range import BlendRange

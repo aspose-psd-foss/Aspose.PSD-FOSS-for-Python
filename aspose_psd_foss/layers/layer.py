@@ -2,23 +2,23 @@ from __future__ import annotations
 
 from typing import List, Optional, Any
 
-from aspose_psd_foss.big_endian_reader import BigEndianReader
-from aspose_psd_foss.big_endian_writer import BigEndianWriter
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.bigendianwriter import BigEndianWriter
+from aspose_psd_foss.layers.blendmode import BlendMode
+from aspose_psd_foss.layers.channelinformation import ChannelInformation
+from aspose_psd_foss.layers.layerblendingrangesdata import LayerBlendingRangesData
+from aspose_psd_foss.layers.layerblendingrangesinfo import LayerBlendingRangesInfo
+from aspose_psd_foss.layers.layerblendmodemapper import get_blend_mode_key
+from aspose_psd_foss.layers.layermaskdata import LayerMaskData
+from aspose_psd_foss.layers.layermaskdatashort import LayerMaskDataShort
+from aspose_psd_foss.layers.layermaskinfo import LayerMaskInfo
+from aspose_psd_foss.layers.layerrawdata import LayerRawData
+from aspose_psd_foss.layers.layerrecordreader import LayerRecordReader
+from aspose_psd_foss.layers.layerrecordwriter import LayerRecordWriter
+from aspose_psd_foss.layers.psdlayerchannelinfo import PsdLayerChannelInfo
+from aspose_psd_foss.layers.rawlayerblendingrangessection import RawLayerBlendingRangesSection
+from aspose_psd_foss.layers.rawlayermasksection import RawLayerMaskSection
 from aspose_psd_foss.rectangle import Rectangle
-from aspose_psd_foss.blend_mode import BlendMode
-from aspose_psd_foss.layer_raw_data import LayerRawData
-from aspose_psd_foss.layer_blend_mode_mapper import LayerBlendModeMapper
-from aspose_psd_foss.layer_record_reader import LayerRecordReader
-from aspose_psd_foss.layer_record_writer import LayerRecordWriter
-from aspose_psd_foss.channel_information import ChannelInformation
-from aspose_psd_foss.psd_layer_channel_info import PsdLayerChannelInfo
-from aspose_psd_foss.layer_mask_info import LayerMaskInfo
-from aspose_psd_foss.layer_blending_ranges_info import LayerBlendingRangesInfo
-from aspose_psd_foss.layer_mask_data import LayerMaskData
-from aspose_psd_foss.layer_mask_data_short import LayerMaskDataShort
-from aspose_psd_foss.layer_blending_ranges_data import LayerBlendingRangesData
-from aspose_psd_foss.raw_layer_mask_section import RawLayerMaskSection
-from aspose_psd_foss.raw_layer_blending_ranges_section import RawLayerBlendingRangesSection
 
 
 class Layer:
@@ -253,7 +253,7 @@ class Layer:
         if self._blend_mode != blend_mode:
             self._blend_mode = blend_mode
             self._raw_data = self._raw_data.with_blend_mode_key(
-                LayerBlendModeMapper.get_blend_mode_key(blend_mode)
+                get_blend_mode_key(blend_mode)
             )
             self._has_mutated = True
 

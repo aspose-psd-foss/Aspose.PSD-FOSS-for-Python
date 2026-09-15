@@ -1,9 +1,8 @@
 # Writes parsed PSD/PSB document state to a stream.
 import sys
 
-from aspose_psd_foss.sections.psd_image_document_state import PsdImageDocumentState
-from aspose_psd_foss.big_endian_writer import BigEndianWriter
-from aspose_psd_foss.sections.psd_header import PsdHeader
+from aspose_psd_foss.bigendianwriter import BigEndianWriter
+from aspose_psd_foss.sections.psdheader import PsdHeader
 
 
 class PsdImageWriter:

@@ -1,11 +1,11 @@
 import io
 
-from aspose_psd_foss.sections.layer_and_mask_section import LayerAndMaskSection
-from aspose_psd_foss.big_endian_reader import BigEndianReader
-from aspose_psd_foss.psd_section_reader import PsdSectionReader
-from aspose_psd_foss.core_exceptions.psd_load_exception import PsdLoadException
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
 from aspose_psd_foss.layers.layer import Layer
-from aspose_psd_foss.layers.layer_record_reader import LayerRecordReader
+from aspose_psd_foss.layers.layerrecordreader import LayerRecordReader
+from aspose_psd_foss.psdsectionreader import PsdSectionReader
+from aspose_psd_foss.sections.layerandmasksection import LayerAndMaskSection
 
 
 class LayerAndMaskSectionReader:
