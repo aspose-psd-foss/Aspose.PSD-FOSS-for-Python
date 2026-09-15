@@ -1,12 +1,11 @@
 import unittest
 import os
 
-from aspose_psd_foss_test.psd_test_fixture_base import PsdTestFixtureBase
-from aspose_psd_foss.psd_image import PsdImage
-from aspose_psd_foss.color_modes import ColorModes
-from aspose_psd_foss.sections.psd_header import PsdHeader
-from aspose_psd_foss.compression_method import CompressionMethod
-from aspose_psd_foss.layers.blend_mode import BlendMode
+from aspose_psd_foss.colormodes import ColorModes
+from aspose_psd_foss.compressionmethod import CompressionMethod
+from aspose_psd_foss.layers.blendmode import BlendMode
+from aspose_psd_foss.psdimage import PsdImage
+from aspose_psd_foss.sections.psdheader import PsdHeader
 
 
 class FixtureDocumentTests(PsdTestFixtureBase):

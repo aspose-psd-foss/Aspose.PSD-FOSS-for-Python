@@ -1,13 +1,13 @@
 import io
 import os
 
-from src.test.psd_test_fixture_base import PsdTestFixtureBase
-from src.psd_image import PsdImage
-from src.big_endian_reader import BigEndianReader
-from src.sections.color_data import ColorData
-from src.color_modes import ColorModes
-from src.sections.psd_color_data_kind import PsdColorDataKind
-from src.core_exceptions.psd_load_exception import PsdLoadException
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.colormodes import ColorModes
+from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
+from aspose_psd_foss.psdimage import PsdImage
+from aspose_psd_foss.sections.colordata import ColorData
+from aspose_psd_foss.sections.psdcolordatakind import PsdColorDataKind
+from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
 
 
 class ColorDataTests(PsdTestFixtureBase):

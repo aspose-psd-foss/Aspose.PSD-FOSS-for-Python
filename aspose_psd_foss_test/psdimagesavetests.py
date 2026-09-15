@@ -2,8 +2,8 @@ import os
 import unittest
 from pathlib import Path
 
-from aspose_psd_foss.psd_image import PsdImage
-from aspose_psd_foss_test.psd_test_fixture_base import PsdTestFixtureBase
+from aspose_psd_foss.psdimage import PsdImage
+from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
 
 
 class PsdImageSaveTests(PsdTestFixtureBase, unittest.TestCase):

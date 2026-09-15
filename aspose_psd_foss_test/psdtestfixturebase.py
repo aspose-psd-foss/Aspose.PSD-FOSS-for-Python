@@ -5,12 +5,11 @@ import uuid
 from pathlib import Path
 import io
 
-from aspose_psd_foss.psd_image import PsdImage
-from aspose_psd_foss.color_modes import ColorModes
-from aspose_psd_foss.big_endian_writer import BigEndianWriter
-from aspose_psd_foss.compression_method import CompressionMethod
-from aspose_psd_foss.resources.indexed_color_palette import IndexedColorPalette
-from aspose_psd_foss.big_endian_bit_converter import BigEndianBitConverter
+from aspose_psd_foss.bigendianbitconverter import BigEndianBitConverter
+from aspose_psd_foss.bigendianwriter import BigEndianWriter
+from aspose_psd_foss.colormodes import ColorModes
+from aspose_psd_foss.psdimage import PsdImage
+from aspose_psd_foss.resources.indexedcolorpalette import IndexedColorPalette
 
 
 class PsdTestFixtureBase:

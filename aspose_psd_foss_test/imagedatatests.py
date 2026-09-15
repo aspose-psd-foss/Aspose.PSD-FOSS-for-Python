@@ -1,12 +1,11 @@
 import io
 
-from aspose_psd_foss.psd_image import PsdImage
-from aspose_psd_foss.compression_method import CompressionMethod
-from aspose_psd_foss.sections.image_data_kind import ImageDataKind
-from aspose_psd_foss.sections.image_data import ImageData
-from aspose_psd_foss.big_endian_reader import BigEndianReader
-from aspose_psd_foss.core_exceptions.psd_load_exception import PsdLoadException
-from aspose_psd_foss_test.psd_test_fixture_base import PsdTestFixtureBase
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.compressionmethod import CompressionMethod
+from aspose_psd_foss.psdimage import PsdImage
+from aspose_psd_foss.sections.imagedata import ImageData
+from aspose_psd_foss.sections.imagedatakind import ImageDataKind
+from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
 
 
 class ImageDataTests(PsdTestFixtureBase):

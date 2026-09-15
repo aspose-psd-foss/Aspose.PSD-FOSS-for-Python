@@ -3,14 +3,14 @@ from pathlib import Path
 
 import pytest
 
-from aspose_psd_foss_test.psd_test_fixture_base import PsdTestFixtureBase
-from aspose_psd_foss.big_endian_bit_converter import BigEndianBitConverter
-from aspose_psd_foss.psd_image import PsdImage
-from aspose_psd_foss.core_exceptions.psd_load_exception import PsdLoadException
-from aspose_psd_foss.big_endian_reader import BigEndianReader
+from aspose_psd_foss.bigendianbitconverter import BigEndianBitConverter
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
+from aspose_psd_foss.layers.blendmode import BlendMode
 from aspose_psd_foss.layers.layer import Layer
+from aspose_psd_foss.psdimage import PsdImage
 from aspose_psd_foss.rectangle import Rectangle
-from aspose_psd_foss.layers.blend_mode import BlendMode
+from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
 
 
 class LayerSectionTests(PsdTestFixtureBase):

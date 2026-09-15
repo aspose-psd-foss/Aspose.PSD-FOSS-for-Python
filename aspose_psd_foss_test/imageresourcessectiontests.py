@@ -2,12 +2,12 @@ import os
 import io
 import unittest
 
-from aspose_psd_foss.psd_test_fixture_base import PsdTestFixtureBase
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.psdimage import PsdImage
 from aspose_psd_foss.resources.imageresourceids import ImageResourceIds
-from aspose_psd_foss.big_endian_reader import BigEndianReader
 from aspose_psd_foss.resources.unknownresource import UnknownResource
-from aspose_psd_foss.psd_image import PsdImage
 from aspose_psd_foss.resources.psdresourcekind import PsdResourceKind
+from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
 
 
 class ImageResourcesSectionTests(PsdTestFixtureBase, unittest.TestCase):

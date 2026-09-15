@@ -1,18 +1,13 @@
 import unittest
-from aspose_psd_foss_test.psd_test_fixture_base import PsdTestFixtureBase
+
+from aspose_psd_foss.colormodes import ColorModes
 from aspose_psd_foss.image import Image
-from aspose_psd_foss.psd_image import PsdImage
-from aspose_psd_foss.layers.layer import Layer
-from aspose_psd_foss.rectangle import Rectangle
-from aspose_psd_foss.layers.blend_mode import BlendMode
-from aspose_psd_foss.layers.channel_information import ChannelInformation
-from aspose_psd_foss.layers.layer_blending_ranges_data import LayerBlendingRangesData
+from aspose_psd_foss.layers.blendmode import BlendMode
+from aspose_psd_foss.layers.layerblendingrangesdata import LayerBlendingRangesData
 from aspose_psd_foss.point import Point
+from aspose_psd_foss.rectangle import Rectangle
 from aspose_psd_foss.size import Size
-from aspose_psd_foss.color_modes import ColorModes
-from aspose_psd_foss.resource_block import ResourceBlock
-from aspose_psd_foss.layers.layer_resource import LayerResource
-from aspose_psd_foss.layers.global_layer_mask_info import GlobalLayerMaskInfo
+from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
 
 
 class AsposeCompatibilityTests(PsdTestFixtureBase, unittest.TestCase):

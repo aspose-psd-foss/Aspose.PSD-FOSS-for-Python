@@ -1,13 +1,12 @@
-import aspose_psd_foss.file_formats.psd
 import sys
 import unittest
 import io
 
-from aspose_psd_foss_test.psd_test_fixture_base import PsdTestFixtureBase
-from aspose_psd_foss.sections.psd_header import PsdHeader
-from aspose_psd_foss.big_endian_reader import BigEndianReader
-from aspose_psd_foss.core_exceptions.psd_load_exception import PsdLoadException
-from aspose_psd_foss.color_modes import ColorModes
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.colormodes import ColorModes
+from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
+from aspose_psd_foss.sections.psdheader import PsdHeader
+from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
 
 
 class PsdHeaderTests(PsdTestFixtureBase):

@@ -1,12 +1,12 @@
 import os
 import unittest
 
-from aspose_psd_foss_test.psd_test_fixture_base import PsdTestFixtureBase
-from aspose_psd_foss.psd_image import PsdImage
-from aspose_psd_foss.resources.psd_resource_kind import PsdResourceKind
-from aspose_psd_foss.sections.psd_color_data_kind import PsdColorDataKind
-from aspose_psd_foss.sections.image_data_kind import ImageDataKind
 from aspose_psd_foss.layers.layer import Layer
+from aspose_psd_foss.psdimage import PsdImage
+from aspose_psd_foss.resources.psdresourcekind import PsdResourceKind
+from aspose_psd_foss.sections.imagedatakind import ImageDataKind
+from aspose_psd_foss.sections.psdcolordatakind import PsdColorDataKind
+from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
 
 
 class InspectionDtoTests(PsdTestFixtureBase, unittest.TestCase):

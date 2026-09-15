@@ -1,7 +1,8 @@
 import io
 import unittest
-from aspose_psd_foss_test.psd_test_fixture_base import PsdTestFixtureBase
-from aspose_psd_foss.big_endian_reader import BigEndianReader
+
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
 
 
 class PascalStringTests(PsdTestFixtureBase, unittest.TestCase):
