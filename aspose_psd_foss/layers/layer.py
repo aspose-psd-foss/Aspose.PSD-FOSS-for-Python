@@ -8,7 +8,7 @@ from aspose_psd_foss.layers.blendmode import BlendMode
 from aspose_psd_foss.layers.channelinformation import ChannelInformation
 from aspose_psd_foss.layers.layerblendingrangesdata import LayerBlendingRangesData
 from aspose_psd_foss.layers.layerblendingrangesinfo import LayerBlendingRangesInfo
-from aspose_psd_foss.layers.layerblendmodemapper import get_blend_mode_key
+from aspose_psd_foss.layers.layerblendmodemapper import LayerBlendModeMapper
 from aspose_psd_foss.layers.layermaskdata import LayerMaskData
 from aspose_psd_foss.layers.layermaskdatashort import LayerMaskDataShort
 from aspose_psd_foss.layers.layermaskinfo import LayerMaskInfo
@@ -253,7 +253,7 @@ class Layer:
         if self._blend_mode != blend_mode:
             self._blend_mode = blend_mode
             self._raw_data = self._raw_data.with_blend_mode_key(
-                get_blend_mode_key(blend_mode)
+                LayerBlendModeMapper.get_blend_mode_key(blend_mode)
             )
             self._has_mutated = True
 

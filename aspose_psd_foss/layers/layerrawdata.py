@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import List
 
+from aspose_psd_foss.layers.layerblendmodemapper import LayerBlendModeMapper
 from aspose_psd_foss.layers.layerchannelinfo import LayerChannelInfo
 from aspose_psd_foss.layers.rawlayerblendingrangessection import RawLayerBlendingRangesSection
 from aspose_psd_foss.layers.rawlayermasksection import RawLayerMaskSection
@@ -60,9 +61,9 @@ class LayerRawData:
 # Initialize the static EMPTY instance
 LayerRawData.EMPTY = LayerRawData(
     0,
-    LayerBlendModeMapper.NormalBlendModeKey,
+    LayerBlendModeMapper.NORMAL_BLEND_MODE_KEY,
     [],
-    RawLayerMaskSection.Empty,
+    RawLayerMaskSection.EMPTY,
     RawLayerBlendingRangesSection.Empty,
     b"",
 )

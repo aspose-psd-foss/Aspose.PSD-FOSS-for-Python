@@ -1,6 +1,5 @@
 import abc
 
-from aspose_psd_foss.psdimage import PsdImage
 from aspose_psd_foss.rectangle import Rectangle
 
 # Provides the Aspose.PSD-compatible base image entry point for loading PSD/PSB documents.
@@ -10,13 +9,13 @@ class Image(abc.ABC):
     @abc.abstractmethod
     def width(self):
         # Gets the image width in pixels.
-        ...
+        pass
 
     @property
     @abc.abstractmethod
     def height(self):
         # Gets the image height in pixels.
-        ...
+        pass
 
     @property
     def bounds(self):
@@ -25,6 +24,7 @@ class Image(abc.ABC):
 
     @staticmethod
     def load(*args):
+        from aspose_psd_foss.psdimage import PsdImage
         # Loads a new image from the specified file path or stream.
         if len(args) != 1:
             raise TypeError("load() takes exactly one argument")
@@ -37,5 +37,5 @@ class Image(abc.ABC):
 
     @abc.abstractmethod
     def dispose(self):
-        # Releases resources used by the image.
-        ...
+        pass
+

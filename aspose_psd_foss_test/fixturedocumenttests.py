@@ -6,6 +6,7 @@ from aspose_psd_foss.compressionmethod import CompressionMethod
 from aspose_psd_foss.layers.blendmode import BlendMode
 from aspose_psd_foss.psdimage import PsdImage
 from aspose_psd_foss.sections.psdheader import PsdHeader
+from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
 
 
 class FixtureDocumentTests(PsdTestFixtureBase):

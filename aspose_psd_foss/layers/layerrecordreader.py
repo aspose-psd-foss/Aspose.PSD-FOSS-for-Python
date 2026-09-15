@@ -1,7 +1,7 @@
 from aspose_psd_foss.bigendianreader import BigEndianReader
 from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
 from aspose_psd_foss.layers.layer import Layer
-from aspose_psd_foss.layers.layerblendmodemapper import parse_blend_mode_key
+from aspose_psd_foss.layers.layerblendmodemapper import LayerBlendModeMapper
 from aspose_psd_foss.layers.layerchannelinfo import LayerChannelInfo
 from aspose_psd_foss.layers.rawlayerblendingrangessection import RawLayerBlendingRangesSection
 from aspose_psd_foss.layers.rawlayermasksection import RawLayerMaskSection
@@ -45,7 +45,7 @@ class LayerRecordReader:
 
         blend_mode_key = reader.read_bytes(4)
         original_blend_mode_key = blend_mode_key.decode("ascii")
-        blend_mode = parse_blend_mode_key(blend_mode_key)
+        blend_mode = LayerBlendModeMapper.parse_blend_mode_key(blend_mode_key)
 
         opacity = reader.read_byte()
         clipping = reader.read_byte()

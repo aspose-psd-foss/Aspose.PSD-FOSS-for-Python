@@ -1,4 +1,5 @@
 # Represents PSD layer blending ranges data.
+from aspose_psd_foss.layers.blendrange import BlendRange
 
 
 class LayerBlendingRangesData:
