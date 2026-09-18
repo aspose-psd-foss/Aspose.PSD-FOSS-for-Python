@@ -1,10 +1,6 @@
-import enum
+from enum import Enum
 
-
-# Represents the supported PSD container versions.
-class PsdVersion(enum.Enum):
-    # Standard PSD document format.
+class PsdVersion(Enum):
+    """Represents the supported PSD container versions."""
     PSD = 1
-
-    # Large-document PSB format.
     PSB = 2

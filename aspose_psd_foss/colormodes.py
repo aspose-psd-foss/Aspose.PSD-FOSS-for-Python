@@ -1,8 +1,9 @@
-from enum import IntEnum
+from enum import Enum
 
 
 # Defines the color modes supported by PSD files.
-class ColorModes(IntEnum):
+
+class ColorModes(Enum):
     # Bitmap color mode.
     BITMAP = 0
     # Grayscale color mode.

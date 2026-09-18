@@ -5,6 +5,8 @@ import uuid
 from pathlib import Path
 import io
 
+import pytest
+
 from aspose_psd_foss.bigendianbitconverter import BigEndianBitConverter
 from aspose_psd_foss.bigendianwriter import BigEndianWriter
 from aspose_psd_foss.colormodes import ColorModes
@@ -15,33 +17,26 @@ from aspose_psd_foss.resources.indexedcolorpalette import IndexedColorPalette
 class PsdTestFixtureBase:
     """Provides common temporary-file helpers and binary fixture builders for PSD tests."""
 
-    def __init__(self):
-        """Initializes a new instance of the PsdTestFixtureBase class.
-        Creates a temporary test directory for output files."""
-        self._test_dir = os.path.join(
-            tempfile.gettempdir(),
-            f"AsposePsdTest_{uuid.uuid4()}",
-        )
-        os.makedirs(self._test_dir, exist_ok=True)
+    @pytest.fixture(autouse=True)
+    def test_dir(self, tmp_path):
+        """Creates a temporary test directory for output files.
 
-    def __del__(self):
-        """Releases all resources used by the test fixture.
-        Deletes the temporary test directory and its contents."""
-        try:
-            shutil.rmtree(self._test_dir)
-        except Exception:
-            pass
+        The directory is automatically cleaned up by pytest's tmp_path fixture.
+        """
+        test_dir = tmp_path / f"AsposePsdTest_{uuid.uuid4()}"
+        test_dir.mkdir(parents=True, exist_ok=True)
+        self._test_dir = str(test_dir)
+        yield self._test_dir
 
-    @staticmethod
-    def get_persistent_artifact_path(file_name):
-        """Gets a stable artifact path for the current test under the NUnit work directory.
+    def get_persistent_artifact_path(self, file_name):
+        """Gets a stable artifact path for the current test under the artifacts directory.
 
         :param file_name: The artifact file name.
         :return: The full output path for the artifact.
         """
-        # In Python test frameworks the current test name can be obtained differently.
-        # Here we fall back to a generic placeholder if not available.
         test_name = os.getenv("PYTEST_CURRENT_TEST", "unknown_test")
+        # Sanitize test name for use as a directory name
+        test_name = self.sanitize_path_segment(test_name)
         artifact_directory = os.path.join(
             os.getcwd(),
             "artifacts",
@@ -69,7 +64,7 @@ class PsdTestFixtureBase:
 
     @staticmethod
     def log_artifact_directory(output_file):
-        """Writes the artifact directory path for the current test to the NUnit output log.
+        """Writes the artifact directory path for the current test to the output log.
 
         :param output_file: The saved artifact file path.
         """
@@ -86,42 +81,40 @@ class PsdTestFixtureBase:
         invalid_characters = set(chr(c) for c in range(0, 32)) | set('<>:"/\\|?*')
         return ''.join('_' if ch in invalid_characters else ch for ch in value)
 
-    @staticmethod
-    def assert_byte_exact_round_trip(file_name):
+    def assert_byte_exact_round_trip(self, file_name):
         """Asserts that saving a fixture without mutations produces byte-for-byte identical output.
 
         :param file_name: The fixture file name.
         """
-        test_file = PsdTestFixtureBase.get_test_data_path(file_name)
-        output_file = PsdTestFixtureBase.get_persistent_artifact_path(file_name)
+        test_file = self.get_test_data_path(file_name)
+        output_file = self.get_persistent_artifact_path(file_name)
         with open(test_file, "rb") as f:
             original_bytes = f.read()
 
         with PsdImage.load(test_file) as image:
             image.save(output_file)
-        PsdTestFixtureBase.log_artifact_directory(output_file)
+        self.log_artifact_directory(output_file)
 
         with open(output_file, "rb") as f:
             saved_bytes = f.read()
         assert saved_bytes == original_bytes, "Saved bytes differ from original"
 
-    @staticmethod
-    def assert_rename_save(file_name, layer_index, new_name):
+    def assert_rename_save(self, file_name, layer_index, new_name):
         """Asserts that renaming a layer persists after saving and reloading a fixture.
 
         :param file_name: The fixture file name.
         :param layer_index: The zero-based layer index to rename.
         :param new_name: The replacement layer name.
         """
-        test_file = PsdTestFixtureBase.get_test_data_path(file_name)
-        output_file = PsdTestFixtureBase.get_persistent_artifact_path(
+        test_file = self.get_test_data_path(file_name)
+        output_file = self.get_persistent_artifact_path(
             f"renamed_{file_name}",
         )
 
         with PsdImage.load(test_file) as image:
             image.layers[layer_index].name = new_name
             image.save(output_file)
-        PsdTestFixtureBase.log_artifact_directory(output_file)
+        self.log_artifact_directory(output_file)
 
         with PsdImage.load(output_file) as reloaded:
             assert (
@@ -407,4 +400,3 @@ class PsdTestFixtureBase:
         writer.write(extra_data)
 
         return stream.getvalue()
-

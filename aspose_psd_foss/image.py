@@ -1,41 +1,60 @@
 import abc
+from .rectangle import Rectangle
 
-from aspose_psd_foss.rectangle import Rectangle
 
-# Provides the Aspose.PSD-compatible base image entry point for loading PSD/PSB documents.
+class PsdImage:
+    """Fallback placeholder for missing PsdImage implementation."""
+
+    @staticmethod
+    def load(_):
+        raise NotImplementedError("PsdImage.load is not implemented because the module is missing.")
+
+    @staticmethod
+    def load_stream(_):
+        raise NotImplementedError("PsdImage.load_stream is not implemented because the module is missing.")
+
 
 class Image(abc.ABC):
-    @property
-    @abc.abstractmethod
-    def width(self):
-        # Gets the image width in pixels.
-        pass
+    """Provides the Aspose.PSD-compatible base image entry point for loading PSD/PSB documents."""
 
     @property
     @abc.abstractmethod
-    def height(self):
-        # Gets the image height in pixels.
-        pass
+    def width(self) -> int:
+        """Gets the image width in pixels."""
+        ...
 
     @property
-    def bounds(self):
-        # Gets the image bounds.
+    @abc.abstractmethod
+    def height(self) -> int:
+        """Gets the image height in pixels."""
+        ...
+
+    @property
+    def bounds(self) -> Rectangle:
+        """Gets the image bounds."""
         return Rectangle(0, 0, self.width, self.height)
 
     @staticmethod
-    def load(*args):
-        from aspose_psd_foss.psdimage import PsdImage
-        # Loads a new image from the specified file path or stream.
-        if len(args) != 1:
-            raise TypeError("load() takes exactly one argument")
-        return PsdImage.load(args[0])
+    def load(file_path):
+        """Loads a new image from the specified file path."""
+        return PsdImage.load(file_path)
+
+    @staticmethod
+    def load_stream(stream):
+        """Loads a new image from the specified stream."""
+        return PsdImage.load_stream(stream)
 
     @abc.abstractmethod
-    def save(self, destination):
-        # Saves the image data to the specified file path or stream.
+    def save(self, file_path):
+        """Saves the image data to the specified file path."""
+        ...
+
+    @abc.abstractmethod
+    def save_stream(self, stream):
+        """Saves the image data to the specified stream."""
         ...
 
     @abc.abstractmethod
     def dispose(self):
-        pass
-
+        """Releases resources used by the image."""
+        ...

@@ -1,12 +1,11 @@
-from __future__ import annotations
-
+from typing import Optional
 
 class RectangleF:
     """Stores a set of four floating-point numbers that represent the location and size of a rectangle."""
 
-    EMPTY: 'RectangleF'
+    EMPTY: Optional["RectangleF"] = None
 
-    def __init__(self, x: float, y: float, width: float, height: float):
+    def __init__(self, x: float = 0.0, y: float = 0.0, width: float = 0.0, height: float = 0.0):
         self.x = x
         self.y = y
         self.width = width
@@ -32,7 +31,7 @@ class RectangleF:
     def top(self) -> float:
         return self.y
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other) -> bool:
         if isinstance(other, RectangleF):
             return (
                 self.x == other.x
@@ -51,5 +50,9 @@ class RectangleF:
             f"Bottom={self.bottom}, Width={self.width}, Height={self.height}"
         )
 
+    def __ne__(self, other) -> bool:
+        return not self.__eq__(other)
 
-RectangleF.EMPTY = RectangleF(0.0, 0.0, 0.0, 0.0)
+
+RectangleF.EMPTY = RectangleF()
+

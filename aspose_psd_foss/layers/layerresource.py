@@ -1,13 +1,12 @@
 from abc import ABC, abstractmethod
+from aspose_psd_foss.streamcontainer import StreamContainer
 
 
-# Represents a PSD layer resource.
 class LayerResource(ABC):
-    # The common layer resource signature.
-    RESOURCE_SIGNATURE = 0x3842494D
+    """Represents a PSD layer resource."""
 
-    # The PSB-specific layer resource signature.
-    PSB_RESOURCE_SIGNATURE = 0x38425053
+    ResourceSignature = 0x3842494D
+    PsbResourceSignature = 0x38425053
 
     @property
     @abstractmethod
@@ -29,14 +28,9 @@ class LayerResource(ABC):
     @property
     def signature(self):
         """Gets the layer resource signature."""
-        return self.RESOURCE_SIGNATURE
+        return self.ResourceSignature
 
     @abstractmethod
-    def save(self, stream_container, psd_version):
-        """Saves the layer resource to the specified stream container.
-
-        Args:
-            stream_container: The stream container to save to.
-            psd_version: The PSD version.
-        """
+    def save(self, stream_container: StreamContainer, psd_version: int):
+        """Saves the layer resource to the specified stream container."""
         ...

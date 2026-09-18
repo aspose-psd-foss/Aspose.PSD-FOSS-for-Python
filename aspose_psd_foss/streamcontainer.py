@@ -1,15 +1,12 @@
-"""Represents a stream container used by resource save APIs."""
+import io
+
 
 class StreamContainer:
-    """Represents a stream container used by resource save APIs.
-
-    Args:
-        stream: The wrapped stream.
-    """
+    """Represents a stream container used by resource save APIs."""
 
     def __init__(self, stream):
         if stream is None:
-            raise ValueError("stream cannot be None")
+            raise ValueError("stream")
         self._stream = stream
 
     @property

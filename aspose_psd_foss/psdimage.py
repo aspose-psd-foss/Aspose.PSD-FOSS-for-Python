@@ -1,334 +1,293 @@
+from __future__ import annotations
+
 import io
-from typing import List, Optional, Sequence
+import os
+import typing
 
-from aspose.psd.fileformats.psd.resources import UnknownResource
+from .image import Image
+from .size import Size
+from .resourceblock import ResourceBlock
+from .resources.preservedresourceblock import PreservedResourceBlock
+from .layers.layerresource import LayerResource
+from .layers.globallayermaskinfo import GlobalLayerMaskInfo
+from .sections.psdheader import PsdHeader
+from .sections.psdcolordatainfo import PsdColorDataInfo
+from .resources.indexedcolorpaletteinfo import IndexedColorPaletteInfo
+from .compressionmethod import CompressionMethod
+from .sections.psdimagedatainfo import PsdImageDataInfo
+from .sections.imagedatakind import ImageDataKind
+from .sections.colordata import ColorData
+from .resources.psdresourceinfo import PsdResourceInfo
+from .loaders import psdimageloader as _psd_loader
+from .loaders.psdimageloader import PsdImageDocumentState
+from .colormodes import ColorModes
+from typing import Any as Layer
 
-from aspose_psd_foss.colormodes import ColorModes
-from aspose_psd_foss.compressionmethod import CompressionMethod
-from aspose_psd_foss.image import Image
-from aspose_psd_foss.layers.globallayermaskinfo import GlobalLayerMaskInfo
 
-from aspose_psd_foss.layers.layer import Layer
-from aspose_psd_foss.layers.layerresource import LayerResource
-from aspose_psd_foss.resourceblock import ResourceBlock
-from aspose_psd_foss.resources.indexedcolorpaletteinfo import IndexedColorPaletteInfo
-from aspose_psd_foss.resources.preservedresourceblock import PreservedResourceBlock
-from aspose_psd_foss.resources.psdresourceinfo import PsdResourceInfo
-from aspose_psd_foss.sections.colordata import ColorData
-from aspose_psd_foss.sections.imagedatakind import ImageDataKind
-from aspose_psd_foss.sections.psdcolordatainfo import PsdColorDataInfo
-from aspose_psd_foss.sections.psdheader import PsdHeader
-from aspose_psd_foss.sections.psdimagedatainfo import PsdImageDataInfo
-from aspose_psd_foss.sections.psdimagedocumentstate import PsdImageDocumentState
-from aspose_psd_foss.size import Size
-
+class PsdImageWriter:
+    """Fallback writer used when the real writer implementation is missing."""
+    @staticmethod
+    def save(document, stream: typing.BinaryIO, leave_open: bool) -> None:
+        raise NotImplementedError("PsdImageWriter is not implemented in this build.")
 
 
 class PsdImage(Image):
-    """Represents a PSD image that can be loaded, inspected, and saved without rendering."""
-
-    def __init__(self, stream: io.BytesIO, leave_open: bool):
-        """Initializes a new instance of the PsdImage class over an internal working stream."""
+    def __init__(self, stream: typing.BinaryIO, leave_open: bool):
         self._stream = stream
         self._leave_open = leave_open
         self._disposed = False
-        self._document: PsdImageDocumentState = PsdImageDocumentState.empty()
+        self._document: typing.Optional[PsdImageDocumentState] = None
 
     @property
     def width(self) -> int:
-        """Gets the document width in pixels."""
-        return self._document.header.width if self._document.header else 0
+        return self._document.header.width if self._document and self._document.header else 0
 
     @property
     def height(self) -> int:
-        """Gets the document height in pixels."""
-        return self._document.header.height if self._document.header else 0
+        return self._document.header.height if self._document and self._document.header else 0
 
     @property
     def _channels(self) -> int:
-        """Gets the document channel count from the PSD header."""
-        return self._document.header.channels if self._document.header else 0
+        return self._document.header.channels if self._document and self._document.header else 0
 
     @property
     def bits_per_channel(self) -> int:
-        """Gets the number of bits stored per channel."""
-        return self._document.header.bit_depth if self._document.header else 0
+        return self._document.header.bit_depth if self._document and self._document.header else 0
 
     @property
     def color_mode(self) -> ColorModes:
-        """Gets the PSD color mode reported by the header."""
-        return self._document.header.color_mode if self._document.header else ColorModes.RGB
+        return (
+            self._document.header.color_mode
+            if self._document and self._document.header
+            else ColorModes.RGB
+        )
 
     @color_mode.setter
-    def color_mode(self, value: ColorModes):
-        if self._document.header:
+    def color_mode(self, value: ColorModes) -> None:
+        if self._document and self._document.header:
             self._document.header.set_color_mode(value)
 
     @property
     def version(self) -> int:
-        """Gets or sets the Aspose.PSD-compatible API version number."""
         return 6
 
     @version.setter
-    def version(self, value: int):
+    def version(self, value: int) -> None:
         if value != 6:
             raise ValueError(
-                f"Supported Aspose.PSD-compatible API version is 6, got {value}"
+                "Supported Aspose.PSD-compatible API version is 6."
             )
 
     @property
     def _header(self) -> PsdHeader:
-        """Gets the parsed PSD/PSB header object."""
-        if not self._document.header:
+        if not self._document or not self._document.header:
             raise RuntimeError("PSD/PSB header is not loaded.")
         return self._document.header
 
     @property
     def _is_large_document(self) -> bool:
-        """Gets a value indicating whether the loaded document uses the PSB large-document container."""
-        return (
-            self._document.header.is_large_document
-            if self._document.header
-            else False
+        return bool(
+            self._document and self._document.header and self._document.header.is_large_document
         )
 
     @property
     def _is_psb(self) -> bool:
-        """Gets a value indicating whether the loaded document is a PSB file; this is equivalent to IsLargeDocument."""
         return self._is_large_document
 
     @property
-    def layers(self) -> List[Layer]:
-        """Gets the parsed layer collection."""
-        return list(self._document.layer_and_mask_section.layers)
+    def layers(self) -> typing.List[Layer]:
+        return list(self._document.layer_and_mask_section.layers) if self._document else []
 
     @layers.setter
-    def layers(self, value: Sequence[Layer]):
-        self._document = self._document.with_layer_and_mask_section(
-            self._document.layer_and_mask_section.with_layers(
-                value if value is not None else []
+    def layers(self, value: typing.List[Layer]) -> None:
+        if self._document:
+            self._document.layer_and_mask_section = (
+                self._document.layer_and_mask_section.with_layers(value or [])
             )
-        )
 
     @property
     def channels_count(self) -> int:
-        """Gets the PSD channels count."""
         return self._channels
 
     @property
     def size(self) -> Size:
-        """Gets the image size."""
         return Size(self.width, self.height)
 
     @property
-    def active_layer(self) -> Optional[Layer]:
-        """Gets or sets the active layer."""
+    def active_layer(self) -> typing.Optional[Layer]:
         return self.layers[0] if self.layers else None
 
     @active_layer.setter
-    def active_layer(self, value: Optional[Layer]):
+    def active_layer(self, value: typing.Optional[Layer]) -> None:
         raise NotImplementedError(
             "Changing the active layer is not supported by this FOSS build."
         )
 
     @property
     def _layer_count(self) -> int:
-        """Gets the number of parsed layers in the document."""
         return len(self.layers)
 
     @property
     def _has_layers(self) -> bool:
-        """Gets a value indicating whether the document contains at least one parsed layer."""
-        return len(self._document.layer_and_mask_section.layers) > 0
+        return bool(self._document and self._document.layer_and_mask_section.layers)
 
     @property
     def _has_image_resources(self) -> bool:
-        """Gets a value indicating whether the document contains any parsed image resources."""
-        return self._document.image_resources_section.has_resources
+        return bool(self._document and self._document.image_resources_section.has_resources)
 
     @property
     def _resource_count(self) -> int:
-        """Gets the number of parsed image resource blocks."""
-        return len(self._document.image_resources_section.resources)
+        return len(self._document.image_resources_section.resources) if self._document else 0
 
     @property
-    def image_resources(self) -> List[ResourceBlock]:
-        """Gets or sets the PSD image resources."""
+    def image_resources(self) -> typing.List[ResourceBlock]:
         return [
             PreservedResourceBlock(r)
             for r in self._document.image_resources_section.resources
-        ]
+        ] if self._document else []
 
     @image_resources.setter
-    def image_resources(self, value: List[ResourceBlock]):
+    def image_resources(self, value: typing.List[ResourceBlock]) -> None:
         raise NotImplementedError(
             "Changing image resources is not supported by this FOSS build."
         )
 
     @property
-    def global_layer_resources(self) -> List[LayerResource]:
-        """Gets or sets the global layer resources."""
+    def global_layer_resources(self) -> typing.List[LayerResource]:
         return []
 
     @global_layer_resources.setter
-    def global_layer_resources(self, value: List[LayerResource]):
+    def global_layer_resources(self, value: typing.List[LayerResource]) -> None:
         raise NotImplementedError(
             "Changing global layer resources is not supported by this FOSS build."
         )
 
     @property
-    def global_layer_mask_info(self) -> GlobalLayerMaskInfo:
-        """Gets the global layer mask info."""
-        return GlobalLayerMaskInfo.empty()
+    def global_layer_mask_info(self) -> typing.Optional[GlobalLayerMaskInfo]:
+        return GlobalLayerMaskInfo.EMPTY
 
     @property
     def is_flatten(self) -> bool:
-        """Gets a value indicating whether the PSD image is flattened."""
-        return len(self._document.layer_and_mask_section.layers) == 0
+        return len(self._document.layer_and_mask_section.layers) == 0 if self._document else True
 
     @property
     def has_transparency_data(self) -> bool:
-        """Gets or sets a value indicating whether first alpha channel contains the transparency data for the merged result when specifying layers data."""
         return False
 
     @has_transparency_data.setter
-    def has_transparency_data(self, value: bool):
+    def has_transparency_data(self, value: bool) -> None:
         raise NotImplementedError(
             "Changing transparency data semantics is not supported by this FOSS build."
         )
 
     @property
-    def _resources(self) -> List[PsdResourceInfo]:
-        """Gets a read-only summary of the parsed image resource blocks."""
-        return [r.to_public_info() for r in self._document.image_resources_section.resources]
+    def _resources(self) -> typing.List[PsdResourceInfo]:
+        return [r.to_public_info() for r in self._document.image_resources_section.resources] if self._document else []
 
     @property
     def _has_color_mode_data(self) -> bool:
-        """Gets a value indicating whether the document contains Color Mode Data bytes."""
-        return len(self._document.color_data.raw_data) > 0
+        return bool(self._document and len(self._document.color_data.raw_data) > 0)
 
     @property
     def _color_data_info(self) -> PsdColorDataInfo:
-        """Gets a read-only summary of the parsed Color Mode Data section."""
-        return self._document.color_data.to_public_info()
+        return self._document.color_data.to_public_info() if self._document else None  # type: ignore
 
     @property
-    def _indexed_palette(self) -> Optional[IndexedColorPaletteInfo]:
-        """Gets the parsed indexed palette summary, when the Color Mode Data section contains one."""
-        return self._color_data_info.indexed_palette
+    def _indexed_palette(self) -> typing.Optional[IndexedColorPaletteInfo]:
+        return self._color_data_info.indexed_palette if self._color_data_info else None
 
     @property
     def _has_merged_image_data(self) -> bool:
-        """Gets a value indicating whether the document contains merged image data payload bytes."""
-        return len(self._document.image_data.raw_data) > 0
+        return bool(self._document and len(self._document.image_data.raw_data) > 0)
 
     @property
     def compression(self) -> CompressionMethod:
-        """Gets the compression method used by the merged image data section."""
-        return self._document.image_data.compression
+        return self._document.image_data.compression if self._document else CompressionMethod.RLE  # type: ignore
 
     @property
     def _image_data_info(self) -> PsdImageDataInfo:
-        """Gets a read-only summary of the parsed merged image data structure."""
-        return self._document.image_data.to_public_info()
+        return self._document.image_data.to_public_info() if self._document else None  # type: ignore
 
     @property
     def _image_data_kind(self) -> ImageDataKind:
-        """Gets the structural kind of the merged image data payload."""
-        return self._document.image_data.structure.kind
+        return self._document.image_data.structure.kind if self._document else None  # type: ignore
 
     @property
     def _uses_prediction(self) -> bool:
-        """Gets a value indicating whether ZIP prediction is used by the merged image data payload."""
-        return self._document.image_data.structure.uses_prediction
+        return self._document.image_data.structure.uses_prediction if self._document else False
 
     @property
     def global_angle(self) -> int:
-        """Gets the parsed global angle from the image resources, when present."""
         return getattr(self, "_global_angle", 0)
 
     @global_angle.setter
-    def global_angle(self, value: int):
+    def global_angle(self, value: int) -> None:
         self._global_angle = value
 
     @property
     def _has_icc_profile(self) -> bool:
-        """Gets a value indicating whether an embedded ICC profile resource is present."""
         return False
 
     @property
-    def _is_icc_profile_untagged(self) -> Optional[bool]:
-        """Gets the parsed untagged ICC profile flag, when the corresponding resource is present."""
+    def _is_icc_profile_untagged(self) -> typing.Optional[bool]:
         return None
 
     @property
     def _parsed_color_data(self) -> ColorData:
-        """Gets the parsed color mode data details for internal verification and tests."""
-        return self._document.color_data
+        return self._document.color_data if self._document else None  # type: ignore
 
     @property
-    def _parsed_resources(self) -> List[UnknownResource]:
-        """Gets the parsed image resources for internal verification and tests."""
-        return self._document.image_resources_section.resources
+    def _parsed_resources(self) -> typing.List:
+        return self._document.image_resources_section.resources if self._document else []
 
     @classmethod
     def load(cls, file_path: str) -> "PsdImage":
-        """Loads a PSD image from a file path."""
         if file_path is None:
-            raise ValueError("file_path is None")
-        try:
-            with open(file_path, "rb") as f:
-                return cls.load_stream(f)
-        except FileNotFoundError as e:
-            raise FileNotFoundError(f"File not found: {file_path}") from e
+            raise ValueError("file_path cannot be None")
+        if not os.path.isfile(file_path):
+            raise FileNotFoundError(f"File not found: {file_path}")
+        with open(file_path, "rb") as stream:
+            return cls._load_from_stream(stream, leave_open=False)
 
     @classmethod
-    def load_stream(cls, stream: io.BytesIO) -> "PsdImage":
-        """Loads a PSD image from a readable stream."""
+    def load_from_stream(cls, stream: typing.BinaryIO) -> "PsdImage":
         if stream is None:
-            raise ValueError("stream is None")
-
+            raise ValueError("stream cannot be None")
         original_position = 0
         restore_position = stream.seekable()
         if restore_position:
             original_position = stream.tell()
-
         try:
-            buffered = io.BytesIO()
-            buffered.write(stream.read())
+            buffered = io.BytesIO(stream.read())
             buffered.seek(0)
-            return cls._load(buffered, leave_open=False)
+            return cls._load_from_stream(buffered, leave_open=False)
         finally:
             if restore_position:
                 stream.seek(original_position)
 
     @classmethod
-    def _load(cls, stream: io.BytesIO, leave_open: bool) -> "PsdImage":
+    def _load_from_stream(cls, stream: typing.BinaryIO, leave_open: bool) -> "PsdImage":
         image = cls(stream, leave_open)
-        image._document = PsdImageLoader.load(stream, leave_open)
+        image._document = _psd_loader.load(stream, leave_open)
         return image
 
-    def save(self, file_path: str):
-        """Saves the image to a file path."""
+    def save(self, file_path: str) -> None:
         if file_path is None:
-            raise ValueError("file_path is None")
-        with open(file_path, "wb") as f:
-            self._save(f, leave_open=False)
+            raise ValueError("file_path cannot be None")
+        with open(file_path, "wb") as stream:
+            self._save(stream, leave_open=False)
 
-    def save_stream(self, stream: io.BytesIO):
-        """Saves the image to a writable stream."""
+    def save_to_stream(self, stream: typing.BinaryIO) -> None:
         if stream is None:
-            raise ValueError("stream is None")
+            raise ValueError("stream cannot be None")
         self._save(stream, leave_open=True)
 
-    def _save(self, stream: io.BytesIO, leave_open: bool):
-        """Saves the current document to a stream with configurable stream ownership."""
+    def _save(self, stream: typing.BinaryIO, leave_open: bool) -> None:
         if self._disposed:
-            raise RuntimeError("PsdImage has been disposed")
+            raise RuntimeError("PsdImage is disposed")
         PsdImageWriter.save(self._document, stream, leave_open)
 
-    def dispose(self):
-        """Releases the image and optionally the underlying stream."""
+    def dispose(self) -> None:
         if self._disposed:
             return
         self._disposed = True

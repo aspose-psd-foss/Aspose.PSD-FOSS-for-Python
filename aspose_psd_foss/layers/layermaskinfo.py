@@ -1,22 +1,18 @@
-# Provides a read-only summary of the parsed layer mask subsection.
+# Provides a read‑only summary of the parsed layer mask subsection.
 class LayerMaskInfo:
-    """Provides a read-only summary of the parsed layer mask subsection."""
+    # Initializes a new instance of the LayerMaskInfo class.
+    # is_present: Whether the subsection contains payload bytes.
+    # raw_data_length: The raw subsection length including the leading length field.
     def __init__(self, is_present, raw_data_length):
-        """
-        Initializes a new instance of the LayerMaskInfo class.
-
-        :param is_present: Whether the subsection contains payload bytes.
-        :param raw_data_length: The raw subsection length including the leading length field.
-        """
         self._is_present = is_present
         self._raw_data_length = raw_data_length
 
+    # Gets a value indicating whether the subsection contains payload bytes.
     @property
     def is_present(self):
-        """Gets a value indicating whether the subsection contains payload bytes."""
         return self._is_present
 
+    # Gets the raw subsection length including the leading length field.
     @property
     def raw_data_length(self):
-        """Gets the raw subsection length including the leading length field."""
         return self._raw_data_length

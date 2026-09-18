@@ -9,5 +9,5 @@ class ImageDataKind(Enum):
     RLE = 1
     # The payload is ZIP-compressed scan data, optionally with prediction.
     ZIP = 2
-    # The payload uses an unrecognized compression code and is preserved as-is.
+    # The payload uses an unrecognized compression code and is preserved as‑is.
     UNKNOWN = 3

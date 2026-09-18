@@ -1,21 +1,10 @@
-# Provides a read-only summary of one parsed PSD image resource block.
 from aspose_psd_foss.resources.psdresourcekind import PsdResourceKind
 
 
 class PsdResourceInfo:
-    """
-    Provides a read-only summary of one parsed PSD image resource block.
-    """
+    """Provides a read-only summary of one parsed PSD image resource block."""
 
-    def __init__(
-        self,
-        resource_id: int,
-        name: str,
-        kind: PsdResourceKind,
-        data_length: int,
-        global_angle,
-        is_icc_profile_untagged,
-    ):
+    def __init__(self, resource_id, name, kind, data_length, global_angle=None, is_icc_profile_untagged=None):
         """
         Initializes a new instance of the PsdResourceInfo class.
 
@@ -34,31 +23,37 @@ class PsdResourceInfo:
         self._is_icc_profile_untagged = is_icc_profile_untagged
 
     @property
-    def resource_id(self) -> int:
+    def resource_id(self):
         """Gets the PSD resource identifier."""
         return self._resource_id
 
     @property
-    def name(self) -> str:
+    def name(self):
         """Gets the decoded Pascal resource name."""
         return self._name
 
     @property
-    def kind(self) -> PsdResourceKind:
+    def kind(self):
         """Gets the semantic classification exposed for the resource."""
         return self._kind
 
     @property
-    def data_length(self) -> int:
+    def data_length(self):
         """Gets the raw payload length in bytes."""
         return self._data_length
 
     @property
     def global_angle(self):
-        """Gets the parsed global angle, when this resource carries that value."""
+        """
+        Gets the parsed global angle, when this resource carries that value.
+        The current unknown-only parser leaves this value unset.
+        """
         return self._global_angle
 
     @property
     def is_icc_profile_untagged(self):
-        """Gets the parsed untagged-profile flag, when this resource carries that value."""
+        """
+        Gets the parsed untagged-profile flag, when this resource carries that value.
+        The current unknown-only parser leaves this value unset.
+        """
         return self._is_icc_profile_untagged

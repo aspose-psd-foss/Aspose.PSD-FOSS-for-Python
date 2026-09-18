@@ -1,11 +1,12 @@
-"""Represents global layer mask information."""
+from typing import Optional
 
+# Represents global layer mask information.
 
 class GlobalLayerMaskInfo:
     """Represents global layer mask information."""
-    pass
+    EMPTY: Optional["GlobalLayerMaskInfo"] = None
 
 
-# internal static instance representing an empty global layer mask info
+# Initialize the static EMPTY instance
 GlobalLayerMaskInfo.EMPTY = GlobalLayerMaskInfo()
 

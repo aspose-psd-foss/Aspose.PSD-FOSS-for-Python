@@ -1,67 +1,78 @@
-import io
+from __future__ import annotations
 
-from aspose_psd_foss.bigendianreader import BigEndianReader
-from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
-from aspose_psd_foss.layers.layer import Layer
-from aspose_psd_foss.layers.layerrecordreader import LayerRecordReader
-from aspose_psd_foss.psdsectionreader import PsdSectionReader
-from aspose_psd_foss.sections.layerandmasksection import LayerAndMaskSection
+import io
+from typing import Any
+
+from .bigendianreader import BigEndianReader
+from . import psdsectionreader as _psdsectionreader
+from .coreexceptions.psdloadexception import PsdLoadException
+
+Layer = Any
+LayerRecordReader = Any
+LayerAndMaskSection = Any
 
 
 class LayerAndMaskSectionReader:
     @staticmethod
     def load(reader: BigEndianReader, is_large_document: bool) -> LayerAndMaskSection:
-        section_length = LayerAndMaskSectionReader._read_section_length(reader, is_large_document)
+        section_length: int = LayerAndMaskSectionReader._read_section_length(
+            reader, is_large_document
+        )
         if section_length == 0:
             return LayerAndMaskSection.empty()
 
-        raw_section_bytes = PsdSectionReader.read_bytes(
-            reader, section_length, "Layer and Mask Information section"
+        raw_section_bytes: bytes = _psdsectionreader.read_bytes(
+            reader,
+            section_length,
+            "Layer and Mask Information section",
         )
         mem_reader = BigEndianReader(io.BytesIO(raw_section_bytes), leave_open=True)
 
-        layer_info_length = PsdSectionReader.validate_signed_length(
-            mem_reader.read_int64() if is_large_document else mem_reader.read_int32(),
-            "Layer Info section",
-        )
+        if is_large_document:
+            layer_info_length: int = _psdsectionreader.validate_signed_length(
+                mem_reader.read_int64(), "Layer Info section"
+            )
+        else:
+            layer_info_length = _psdsectionreader.validate_signed_length(
+                mem_reader.read_int32(), "Layer Info section"
+            )
+
         if layer_info_length > len(raw_section_bytes) - mem_reader.position:
             raise PsdLoadException(
                 "Layer Info section length exceeds the enclosing Layer and Mask Information section."
             )
 
-        layer_info_end = (8 if is_large_document else 4) + layer_info_length
+        layer_info_end: int = (8 if is_large_document else 4) + layer_info_length
         if layer_info_length == 0:
-            tail = (
+            tail: bytes = (
                 raw_section_bytes[mem_reader.position :]
                 if len(raw_section_bytes) > mem_reader.position
                 else b""
             )
-            return LayerAndMaskSection(
-                raw_section_bytes, b"", tail, 0, []
-            )
+            return LayerAndMaskSection(raw_section_bytes, b"", tail, 0, [])
 
         if layer_info_length < 2:
             raise PsdLoadException(
                 "Layer Info section is too short to contain the layer count field."
             )
 
-        layer_count_raw = mem_reader.read_int16()
-        layer_count = -layer_count_raw if layer_count_raw < 0 else layer_count_raw
-        layers = LayerAndMaskSectionReader._read_layers(
+        layer_count_raw: int = mem_reader.read_int16()
+        layer_count: int = -layer_count_raw if layer_count_raw < 0 else layer_count_raw
+        layers: list[Layer] = LayerAndMaskSectionReader._read_layers(
             mem_reader, layer_count, layer_info_end, is_large_document
         )
 
-        channel_image_data_length = int(layer_info_end - mem_reader.position)
-        layer_channel_image_data_raw = (
+        channel_image_data_length: int = layer_info_end - mem_reader.position
+        layer_channel_image_data_raw: bytes = (
             mem_reader.read_bytes(channel_image_data_length)
             if channel_image_data_length > 0
             else b""
         )
 
-        global_mask_and_tail_length = max(
+        global_mask_and_tail_length: int = max(
             0, len(raw_section_bytes) - int(mem_reader.position)
         )
-        layer_global_mask_and_tail_raw = (
+        layer_global_mask_and_tail_raw: bytes = (
             mem_reader.read_bytes(global_mask_and_tail_length)
             if global_mask_and_tail_length > 0
             else b""
@@ -77,10 +88,7 @@ class LayerAndMaskSectionReader:
 
     @staticmethod
     def _read_layers(
-        reader: BigEndianReader,
-        layer_count: int,
-        layer_info_end: int,
-        is_large_document: bool,
+        reader: BigEndianReader, layer_count: int, layer_info_end: int, is_large_document: bool
     ) -> list[Layer]:
         layers: list[Layer] = []
         if layer_count > 0:
@@ -92,9 +100,9 @@ class LayerAndMaskSectionReader:
             raise PsdLoadException(
                 "Layer records exceed the declared Layer Info section length."
             )
+
         return layers
 
     @staticmethod
     def _read_section_length(reader: BigEndianReader, is_large_document: bool) -> int:
         return reader.read_uint64() if is_large_document else reader.read_uint32()
-

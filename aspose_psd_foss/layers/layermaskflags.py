@@ -1,7 +1,9 @@
-from enum import Flag
+"""Defines PSD layer mask flags."""
+
+from enum import IntFlag
 
 
-class LayerMaskFlags(Flag):
+class LayerMaskFlags(IntFlag):
     """Defines PSD layer mask flags."""
     NONE = 0
     RELATIVE_TO_LAYER = 1

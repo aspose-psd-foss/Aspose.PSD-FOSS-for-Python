@@ -1,10 +1,15 @@
-from typing import Tuple, Sequence
+from __future__ import annotations
+
+from typing import Sequence
 
 from aspose_psd_foss.sections.imagedatakind import ImageDataKind
 
 
 class PsdImageDataInfo:
-    # Provides a read-only summary of the PSD merged image data structure.
+    """
+    Provides a read-only summary of the PSD merged image data structure.
+    """
+
     def __init__(
         self,
         kind: ImageDataKind,
@@ -12,19 +17,22 @@ class PsdImageDataInfo:
         row_byte_counts: Sequence[int],
         compressed_payload_length: int,
         uses_prediction: bool,
-    ):
-        # Initializes a new instance of the PsdImageDataInfo class.
-        # kind: The structural kind of the payload.
-        # row_length_field_size: The size of one row-length entry in bytes.
-        # row_byte_counts: The parsed row byte counts for RLE payloads.
-        # compressed_payload_length: The payload length after any structural headers.
-        # uses_prediction: Whether ZIP prediction is in effect.
-        self._kind = kind
-        self._row_length_field_size = row_length_field_size
-        # Clone and make read‑only
-        self._row_byte_counts: Tuple[int, ...] = tuple(row_byte_counts)
-        self._compressed_payload_length = compressed_payload_length
-        self._uses_prediction = uses_prediction
+    ) -> None:
+        """
+        Initializes a new instance of the PsdImageDataInfo class.
+
+        :param kind: The structural kind of the payload.
+        :param row_length_field_size: The size of one row-length entry in bytes.
+        :param row_byte_counts: The parsed row byte counts for RLE payloads.
+        :param compressed_payload_length: The payload length after any structural headers.
+        :param uses_prediction: Whether ZIP prediction is in effect.
+        """
+        self._kind: ImageDataKind = kind
+        self._row_length_field_size: int = row_length_field_size
+        # Store as a tuple to provide read‑only semantics.
+        self._row_byte_counts: tuple[int, ...] = tuple(row_byte_counts)
+        self._compressed_payload_length: int = compressed_payload_length
+        self._uses_prediction: bool = uses_prediction
 
     @property
     def kind(self) -> ImageDataKind:
@@ -37,7 +45,7 @@ class PsdImageDataInfo:
         return self._row_length_field_size
 
     @property
-    def row_byte_counts(self) -> Tuple[int, ...]:
+    def row_byte_counts(self) -> tuple[int, ...]:
         """Gets the parsed row byte counts for RLE payloads."""
         return self._row_byte_counts
 

@@ -1,13 +1,12 @@
-"""Represents an ordered pair of integer x- and y-coordinates that defines a point in a two-dimensional plane."""
-from __future__ import annotations
+from typing import Optional
 
-
+# Represents an ordered pair of integer x- and y-coordinates that defines a point in a two-dimensional plane.
 class Point:
     """Represents an ordered pair of integer x- and y-coordinates that defines a point in a two-dimensional plane."""
 
-    EMPTY: "Point"  # will be set after the class definition
+    EMPTY: Optional['Point'] = None  # will be set after class definition
 
-    def __init__(self, x: int, y: int):
+    def __init__(self, x: int = 0, y: int = 0):
         """Initializes a new instance of the Point structure with the specified coordinates."""
         self.x = x
         self.y = y
@@ -35,31 +34,28 @@ class Point:
         """Gets a value indicating whether this Point has coordinates left uninitialized."""
         return self.x == 0 and self.y == 0
 
-    def __eq__(self, other: object) -> bool:
-        """Determines whether the specified object is equal to this point."""
+    def __eq__(self, other):
+        """Determines whether the specified point is equal to this point."""
         if isinstance(other, Point):
             return self.x == other.x and self.y == other.y
         return False
 
-    def equals(self, other: "Point") -> bool:
-        """Determines whether the specified point is equal to this point."""
-        return self.x == other.x and self.y == other.y
-
-    def __hash__(self) -> int:
+    def __hash__(self):
         """Returns a hash code for this point."""
         return hash((self.x, self.y))
 
-    def __str__(self) -> str:
+    def __str__(self):
         """Returns a compact coordinate representation."""
         return f"X={self.x}, Y={self.y}"
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return f"Point({self.x}, {self.y})"
 
-    def __ne__(self, other: object) -> bool:
+    def __ne__(self, other):
         """Determines whether two points are not equal."""
         return not self.__eq__(other)
 
 
-# Initialize the static readonly EMPTY instance
-Point.EMPTY = Point(0, 0)
+# Initialize the static EMPTY field
+Point.EMPTY = Point()
+

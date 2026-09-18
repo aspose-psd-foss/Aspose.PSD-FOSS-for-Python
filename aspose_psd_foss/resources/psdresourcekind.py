@@ -1,7 +1,7 @@
-# Identifies the semantic classification exposed for an image resource block.
 from enum import Enum
 
 
+# Identifies the semantic classification exposed for an image resource block.
 class PsdResourceKind(Enum):
     # The resource is not parsed semantically and remains raw-preserved only.
     UNKNOWN = 0
