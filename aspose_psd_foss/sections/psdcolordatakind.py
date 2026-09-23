@@ -1,9 +1,9 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class PsdColorDataKind(Enum):
-    NONE = 0
-    INDEXED_PALETTE = 1
-    RGB_PAYLOAD = 2
-    CMYK_PAYLOAD = 3
-    RAW_PRESERVED = 4
+    NONE = auto()
+    INDEXED_PALETTE = auto()
+    RGB_PAYLOAD = auto()
+    CMYK_PAYLOAD = auto()
+    RAW_PRESERVED = auto()

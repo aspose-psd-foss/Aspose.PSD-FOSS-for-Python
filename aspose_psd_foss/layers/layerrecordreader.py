@@ -1,55 +1,115 @@
-from typing import Any
+from .layerchannelinfo import LayerChannelInfo
+from .layerblendmodemapper import LayerBlendModeMapper
+from .rawlayermasksection import RawLayerMaskSection
+from .rawlayerblendingrangessection import RawLayerBlendingRangesSection
+from .layerrawdata import LayerRawData
+from ..coreexceptions.psdloadexception import PsdLoadException
+from ..rectangle import Rectangle
+from ..psdsectionreader import PsdSectionReader
 
-class Layer:
-    """
-    Represents a PSD layer with basic properties such as name, bounds,
-    visibility, opacity, and blend mode.
-    """
+from .layer import Layer
 
-    def __init__(self) -> None:
-        self._name: str = ""
-        self._bounds: Any = None
-        self._visibility: bool = True
-        self._opacity: int = 255
-        self._blend_mode: Any = None
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .layer import Layer
 
-    def set_name(self, name: str) -> None:
-        """Sets the layer's name."""
-        self._name = name
+AdobeLayerSignature = 0x3842494D
+AdobeLayerSignatureText = "8BIM"
+LayerInvisibleFlag = 0x02
 
-    def set_bounds(self, bounds: Any) -> None:
-        """Sets the layer's rectangular bounds."""
-        self._bounds = bounds
 
-    def set_visibility(self, visible: bool) -> None:
-        """Sets the layer's visibility flag."""
-        self._visibility = visible
+def load(reader, is_large_document):
+    top = reader.ReadInt32()
+    left = reader.ReadInt32()
+    bottom = reader.ReadInt32()
+    right = reader.ReadInt32()
 
-    def set_opacity(self, opacity: int) -> None:
-        """
-        Sets the layer's opacity.
+    actual_channel_count = reader.ReadUInt16()
+    channel_info_array = [None] * actual_channel_count
 
-        Args:
-            opacity: An integer in the range 0-255 where 255 is fully opaque.
-        """
-        self._opacity = opacity
+    for i in range(actual_channel_count):
+        channel_id = reader.ReadInt16()
+        data_length = reader.ReadUInt64() if is_large_document else reader.ReadUInt32()
 
-    def set_blend_mode(self, blend_mode: Any) -> None:
-        """Sets the layer's blend mode."""
-        self._blend_mode = blend_mode
+        channel_info_array[i] = LayerChannelInfo(
+            ChannelId=channel_id,
+            DataLength=data_length
+        )
 
-    # Optional getters for external use
-    def get_name(self) -> str:
-        return self._name
+    signature = reader.ReadInt32()
+    if signature != AdobeLayerSignature:
+        raise PsdLoadException(f"Invalid layer blend mode signature. Expected '{AdobeLayerSignatureText}'.")
 
-    def get_bounds(self) -> Any:
-        return self._bounds
+    blend_mode_key_bytes = reader.ReadBytes(4)
+    original_blend_mode_key = blend_mode_key_bytes.decode('ascii')
+    blend_mode = LayerBlendModeMapper.ParseBlendModeKey(blend_mode_key_bytes)
 
-    def is_visible(self) -> bool:
-        return self._visibility
+    opacity = reader.ReadByte()
+    clipping = reader.ReadByte()
+    flags = reader.ReadByte()
+    reader.ReadByte()
 
-    def get_opacity(self) -> int:
-        return self._opacity
+    extra_length = reader.ReadInt32()
+    if extra_length < 0:
+        raise PsdLoadException("Layer extra data length cannot be negative.")
 
-    def get_blend_mode(self) -> Any:
-        return self._blend_mode
+    layer_name = ""
+    layer_mask_data = RawLayerMaskSection.Empty
+    blending_ranges_data = RawLayerBlendingRangesSection.Empty
+    additional_layer_data = b''
+
+    if extra_length > 0:
+        extra_start = reader.Position
+        extra_end = extra_start + extra_length
+
+        layer_mask_data = RawLayerMaskSection.Load(reader, extra_end)
+        if reader.Position + 4 > extra_end:
+            raise PsdLoadException("Layer extra data is truncated before the blending ranges length field.")
+
+        blending_ranges_data = RawLayerBlendingRangesSection.Load(reader, extra_end)
+        layer_name = reader.ReadPascalStringAlignedTo4()
+
+        remaining = extra_end - reader.Position
+        if remaining < 0:
+            raise PsdLoadException("Layer extra data parser read beyond the declared extra data boundary.")
+
+        if remaining > 0:
+            additional_layer_data = reader.ReadBytes(
+                PsdSectionReader.GetNestedMemoryBackedLength(reader, remaining, extra_end, "Additional layer data"))
+
+    bounds = Rectangle.FromLTRB(left, top, right, bottom)
+    visible = (flags & LayerInvisibleFlag) == 0
+
+    raw_data = LayerRawData(
+        Flags=flags,
+        OriginalBlendModeKey=original_blend_mode_key,
+        ChannelInfoArray=channel_info_array,
+        LayerMaskData=layer_mask_data,
+        BlendingRangesData=blending_ranges_data,
+        AdditionalLayerData=additional_layer_data
+    )
+
+    return Layer.CreateParsed(
+        LayerName=layer_name,
+        Bounds=bounds,
+        Visible=visible,
+        Opacity=opacity,
+        Clipping=clipping,
+        BlendMode=blend_mode,
+        RawData=raw_data
+    )
+
+
+class LayerRecordReader:
+    def __init__(self, stream):
+        self._stream = stream
+
+    @classmethod
+    def load(cls, reader, is_large_document):
+        return load(reader, is_large_document)
+
+    def read(self, is_large_document):
+        return load(self._stream, is_large_document)
+
+
+__all__ = ["LayerRecordReader"]

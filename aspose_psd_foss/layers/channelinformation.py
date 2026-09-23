@@ -1,58 +1,76 @@
 from aspose_psd_foss.compressionmethod import CompressionMethod
 from aspose_psd_foss.psdversion import PsdVersion
-from aspose_psd_foss.layers.layerchannelinfo import LayerChannelInfo
 
 
 class ChannelInformation:
-    """
-    Represents PSD layer channel information.
-    """
+    """Represents PSD layer channel information."""
 
-    def __init__(self, compression_method, bit_depth, psd_version):
-        """
-        Initializes a new instance of ChannelInformation.
+    def __init__(self, compression_method, bit_depth=None, psd_version=None, channel_id=None, length=None):
+        """Initializes a new instance of the ChannelInformation class.
 
-        :param compression_method: The channel compression method.
-        :param bit_depth: The channel bit depth.
-        :param psd_version: The PSD version number.
+        Args:
+            compression_method: The channel compression method (used in public constructor).
+            bit_depth: The channel bit depth (unused in current implementation, preserved for API compatibility).
+            psd_version: The PSD version number (used in public constructor).
+            channel_id: The channel identifier (used in private constructor).
+            length: The declared channel data length (used in private constructor).
         """
-        self.channel_id = None
-        self.compression_method = compression_method
-        self.length = self._get_header_length(psd_version)
+        if channel_id is not None and length is not None:
+            # Private constructor: from parsed layer record metadata
+            self.channel_id = channel_id
+            self.compression_method = CompressionMethod.Raw
+            self._length = length
+        elif compression_method is not None and psd_version is not None:
+            # Public constructor
+            self.compression_method = compression_method
+            self._length = self._get_header_length(psd_version)
+        else:
+            raise ValueError("Invalid constructor arguments. Provide either (compression_method, bit_depth, psd_version) or (channel_id, length).")
+
+    @property
+    def channel_id(self):
+        """Gets or sets the channel identifier."""
+        return self._channel_id
+
+    @channel_id.setter
+    def channel_id(self, value):
+        self._channel_id = value
+
+    @property
+    def compression_method(self):
+        """Gets or sets the channel compression method."""
+        return self._compression_method
+
+    @compression_method.setter
+    def compression_method(self, value):
+        self._compression_method = value
+
+    @property
+    def length(self):
+        """Gets the channel length in bytes."""
+        return self._length
 
     @classmethod
-    def _create_internal(cls, channel_id, length):
-        """
-        Creates an instance from internal layer channel metadata.
+    def from_layer_channel_info(cls, channel_info):
+        """Creates public channel information from the internal layer channel metadata.
 
-        :param channel_id: The channel identifier.
-        :param length: The declared channel data length.
-        :return: ChannelInformation instance.
-        """
-        obj = cls.__new__(cls)
-        obj.channel_id = channel_id
-        obj.compression_method = CompressionMethod.Raw
-        obj.length = length
-        return obj
+        Args:
+            channel_info: The internal layer channel metadata.
 
-    @staticmethod
-    def from_layer_channel_info(channel_info):
+        Returns:
+            The public channel information.
         """
-        Creates public channel information from the internal layer channel metadata.
-
-        :param channel_info: The internal layer channel metadata.
-        :return: The public channel information.
-        """
-        max_int = 2**31 - 1
-        length = max_int if channel_info.data_length > max_int else int(channel_info.data_length)
-        return ChannelInformation._create_internal(channel_info.channel_id, length)
+        length = int(channel_info.DataLength) if channel_info.DataLength <= 2**31 - 1 else 2**31 - 1
+        return cls(channel_id=channel_info.ChannelId, length=length)
 
     @staticmethod
     def _get_header_length(psd_version):
-        """
-        Gets the minimum channel data header length for the specified PSD version.
+        """Gets the minimum channel data header length for the specified PSD version.
 
-        :param psd_version: The PSD version number.
-        :return: The channel data header length.
+        Args:
+            psd_version: The PSD version number.
+
+        Returns:
+            The channel data header length.
         """
-        return 8 if psd_version == int(PsdVersion.Psb) else 2
+        return 8 if psd_version == PsdVersion.Psb else 2

@@ -1,10 +1,16 @@
 from aspose_psd_foss.sections.psdcolordatakind import PsdColorDataKind
-from aspose_psd_foss.resources.indexedcolorpaletteinfo import IndexedColorPaletteInfo
 
 
 class PsdColorDataInfo:
     """Provides a read-only summary of the PSD Color Mode Data section."""
+
     def __init__(self, kind, raw_data_length, indexed_palette):
+        """Initializes a new instance of the <see cref="PsdColorDataInfo"/> class.
+
+        :param kind: The interpreted kind of the payload.
+        :param raw_data_length: The raw payload length in bytes.
+        :param indexed_palette: The parsed indexed palette, when present.
+        """
         self._kind = kind
         self._raw_data_length = raw_data_length
         self._indexed_palette = indexed_palette

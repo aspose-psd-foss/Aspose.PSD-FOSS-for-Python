@@ -1,121 +1,112 @@
-from typing import ClassVar
-
-from .rawlayermasksection import RawLayerMaskSection
-from .rawlayerblendingrangessection import RawLayerBlendingRangesSection
-from .layerchannelinfo import LayerChannelInfo
-
+from aspose_psd_foss.layers.layerblendmodemapper import LayerBlendModeMapper
+from aspose_psd_foss.layers.rawlayermasksection import RawLayerMaskSection
+from aspose_psd_foss.layers.rawlayerblendingrangessection import RawLayerBlendingRangesSection
 
 class LayerRawData:
-    """
-    Stores raw PSD layer record data required for byte‑preserving saves.
-    """
+    """Stores raw PSD layer record data required for byte-preserving saves."""
 
-    # Class level Empty placeholder; will be assigned after the class definition.
-    Empty: ClassVar["LayerRawData"]
+    Empty = None
 
-    def __init__(
-        self,
-        flags,
-        blend_mode_key,
-        channel_info,
-        layer_mask_section,
-        blending_ranges_section,
-        additional_layer_data,
-    ):
+    def __init__(self, flags, blend_mode_key, channel_info, layer_mask_section, blending_ranges_section, additional_layer_data):
+        """Initializes a new instance of the LayerRawData class.
+
+        Args:
+            flags: The original PSD layer flags byte.
+            blend_mode_key: The original 4-byte PSD blend mode key.
+            channel_info: The parsed layer channel metadata.
+            layer_mask_section: The raw layer mask subsection.
+            blending_ranges_section: The raw blending ranges subsection.
+            additional_layer_data: The remaining additional layer data bytes.
         """
-        Initializes a new instance of LayerRawData.
+        self.Flags = flags
+        self.BlendModeKey = blend_mode_key
+        self.ChannelInfo = channel_info
+        self.LayerMaskSection = layer_mask_section
+        self.BlendingRangesSection = blending_ranges_section
+        self.AdditionalLayerData = additional_layer_data
 
-        :param flags: The original PSD layer flags byte.
-        :param blend_mode_key: The original 4‑byte PSD blend mode key.
-        :param channel_info: The parsed layer channel metadata.
-        :param layer_mask_section: The raw layer mask subsection.
-        :param blending_ranges_section: The raw blending ranges subsection.
-        :param additional_layer_data: The remaining additional layer data bytes.
-        """
-        self.flags = flags
-        self.blend_mode_key = blend_mode_key
-        self.channel_info = channel_info
-        self.layer_mask_section = layer_mask_section
-        self.blending_ranges_section = blending_ranges_section
-        self.additional_layer_data = additional_layer_data
+    @classmethod
+    def empty_instance(cls):
+        """Gets an empty raw layer data block."""
+        if cls.Empty is None:
+            cls.Empty = cls(
+                0,
+                LayerBlendModeMapper.normal_blend_mode_key,
+                [],
+                RawLayerMaskSection.Empty,
+                RawLayerBlendingRangesSection.Empty,
+                []
+            )
+        return cls.Empty
 
     @property
-    def flags(self):
+    def Flags(self):
         """Gets the original PSD layer flags byte."""
         return self._flags
 
-    @flags.setter
-    def flags(self, value):
+    @Flags.setter
+    def Flags(self, value):
         self._flags = value
 
     @property
-    def blend_mode_key(self):
-        """Gets the original 4‑byte PSD blend mode key."""
+    def BlendModeKey(self):
+        """Gets the original 4-byte PSD blend mode key."""
         return self._blend_mode_key
 
-    @blend_mode_key.setter
-    def blend_mode_key(self, value):
+    @BlendModeKey.setter
+    def BlendModeKey(self, value):
         self._blend_mode_key = value
 
     @property
-    def channel_info(self):
-        """Gets the parsed per‑channel metadata from the layer record."""
+    def ChannelInfo(self):
+        """Gets the parsed per-channel metadata from the layer record."""
         return self._channel_info
 
-    @channel_info.setter
-    def channel_info(self, value):
+    @ChannelInfo.setter
+    def ChannelInfo(self, value):
         self._channel_info = value
 
     @property
-    def layer_mask_section(self):
+    def LayerMaskSection(self):
         """Gets the raw layer mask subsection including its length field."""
         return self._layer_mask_section
 
-    @layer_mask_section.setter
-    def layer_mask_section(self, value):
+    @LayerMaskSection.setter
+    def LayerMaskSection(self, value):
         self._layer_mask_section = value
 
     @property
-    def blending_ranges_section(self):
+    def BlendingRangesSection(self):
         """Gets the raw blending ranges subsection including its length field."""
         return self._blending_ranges_section
 
-    @blending_ranges_section.setter
-    def blending_ranges_section(self, value):
+    @BlendingRangesSection.setter
+    def BlendingRangesSection(self, value):
         self._blending_ranges_section = value
 
     @property
-    def additional_layer_data(self):
+    def AdditionalLayerData(self):
         """Gets all remaining additional layer data after the Pascal layer name."""
         return self._additional_layer_data
 
-    @additional_layer_data.setter
-    def additional_layer_data(self, value):
+    @AdditionalLayerData.setter
+    def AdditionalLayerData(self, value):
         self._additional_layer_data = value
 
     def with_blend_mode_key(self, blend_mode_key):
-        """
-        Creates a raw data copy with a replacement blend mode key.
+        """Creates a raw data copy with a replacement blend mode key.
 
-        :param blend_mode_key: The replacement 4‑byte PSD blend mode key.
-        :return: The updated raw layer data.
+        Args:
+            blend_mode_key: The replacement 4-byte PSD blend mode key.
+
+        Returns:
+            The updated raw layer data.
         """
         return LayerRawData(
-            self.flags,
+            self.Flags,
             blend_mode_key,
-            self.channel_info,
-            self.layer_mask_section,
-            self.blending_ranges_section,
-            self.additional_layer_data,
+            self.ChannelInfo,
+            self.LayerMaskSection,
+            self.BlendingRangesSection,
+            self.AdditionalLayerData
         )
-
-
-# Assign the Empty instance after the class definition.
-LayerRawData.Empty = LayerRawData(
-    0,
-    b'norm',  # Default normal blend mode key
-    [],
-    RawLayerMaskSection(b""),
-    RawLayerBlendingRangesSection(b""),
-    [],
-)
