@@ -1,83 +1,61 @@
 import os
-from pathlib import Path
-
 import pytest
+from io import BytesIO
 
-from aspose_psd_foss.bigendianbitconverter import BigEndianBitConverter
-from aspose_psd_foss.bigendianreader import BigEndianReader
-from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
-from aspose_psd_foss.layers.blendmode import BlendMode
-from aspose_psd_foss.layers.layer import Layer
 from aspose_psd_foss.psdimage import PsdImage
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.bigendianbitconverter import BigEndianBitConverter
+from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
+from aspose_psd_foss.layers.layer import Layer
 from aspose_psd_foss.rectangle import Rectangle
+from aspose_psd_foss.layers.blendmode import BlendMode
+
 from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
 
 
 class LayerSectionTests(PsdTestFixtureBase):
-    """Contains LayerSection tests."""
+    """Tests LayerSection functionality."""
 
     def test_load_too_long_layer_mask_throws(self):
-        psd_path = Path(
-            os.path.join(
-                self.test_context.current_context.test_directory,
-                "testdata",
-                "test.psd",
-            )
-        )
-        bytes_data = psd_path.read_bytes()
-        color_mode_length = BigEndianBitConverter.to_int32(bytes_data, 26)
+        """Tests that a malformed layer and mask section length is rejected with PsdLoadException."""
+        test_dir = self.get_test_data_directory()
+        bytes = bytearray(open(os.path.join(test_dir, "test.psd"), "rb").read())
+        color_mode_length = BigEndianBitConverter.to_int32(bytes, 26)
         resources_length_offset = 26 + 4 + color_mode_length
-        resources_payload_length = BigEndianBitConverter.to_int32(
-            bytes_data, resources_length_offset
-        )
-        layer_and_mask_length_offset = (
-            resources_length_offset + 4 + resources_payload_length
-        )
-        self.write_uint32_big_endian(
-            bytes_data, layer_and_mask_length_offset, 100000
-        )
-        stream = memoryview(bytes_data)
+        resources_payload_length = BigEndianBitConverter.to_int32(bytes, resources_length_offset)
+        layer_and_mask_length_offset = resources_length_offset + 4 + resources_payload_length
+        self.write_uint32_big_endian(bytes, layer_and_mask_length_offset, 100000)
+        stream = BytesIO(bytes)
 
         with pytest.raises(PsdLoadException):
             PsdImage.load(stream)
 
     def test_load_too_long_layer_extra_throws(self):
-        layer_bytes = self.build_layer_record_bytes_with_extra_data(
-            [
-                0x00,
-                0x00,
-                0x00,
-                0x10,
-                0x00,
-                0x00,
-                0x00,
-                0x00,
-            ]
-        )
-        stream = memoryview(layer_bytes)
+        """Tests that malformed layer extra data is rejected instead of being silently normalized."""
+        layer_bytes = self.build_layer_record_bytes_with_extra_data([
+            0x00, 0x00, 0x00, 0x10,
+            0x00, 0x00, 0x00, 0x00
+        ])
+        stream = BytesIO(layer_bytes)
         reader = BigEndianReader(stream, leave_open=True)
 
         with pytest.raises(PsdLoadException):
             Layer.load(reader, is_large_document=False)
 
     def test_load_negative_layer_extra_throws(self):
+        """Tests that a negative layer extra data length is rejected."""
         layer_bytes = self.build_layer_record_bytes_with_extra_data([])
         self.write_uint32_big_endian(layer_bytes, 30, 0xFFFFFFFF)
-        stream = memoryview(layer_bytes)
+        stream = BytesIO(layer_bytes)
         reader = BigEndianReader(stream, leave_open=True)
 
         with pytest.raises(PsdLoadException):
             Layer.load(reader, is_large_document=False)
 
     def test_load_layer_inspection_reads_values(self):
-        image_path = Path(
-            os.path.join(
-                self.test_context.current_context.test_directory,
-                "testdata",
-                "test.psd",
-            )
-        )
-        image = PsdImage.load(image_path)
+        """Tests that simple layer-level inspection properties expose stored geometry and subsection presence."""
+        test_dir = self.get_test_data_directory()
+        image = PsdImage.load(os.path.join(test_dir, "test.psd"))
         first_layer = image.layers[0]
 
         assert first_layer.bounds == Rectangle(0, 0, 100, 100)
@@ -90,23 +68,14 @@ class LayerSectionTests(PsdTestFixtureBase):
         assert first_layer.channels_count > 0
         assert len(first_layer.raw_blend_mode_key) == 4
         assert first_layer.layer_mask_data is None
-        assert (
-            len(first_layer.layer_blending_ranges_data)
-            == first_layer.blending_ranges_info.raw_data_length - 4
-        )
-        assert first_layer.additional_layer_data
+        assert len(first_layer.layer_blending_ranges_data) == first_layer.blending_ranges_info.raw_data_length - 4
+        assert len(first_layer.additional_layer_data) > 0
 
     def test_save_changes_blend_mode(self):
-        test_file = Path(
-            os.path.join(
-                self.test_context.current_context.test_directory,
-                "testdata",
-                "test.psd",
-            )
-        )
-        output_file = self.get_persistent_artifact_path(
-            "layer_blend_mode_test.psd"
-        )
+        """Tests that changing a layer's blend mode persists after save and reload."""
+        test_dir = self.get_test_data_directory()
+        test_file = os.path.join(test_dir, "test.psd")
+        output_file = self.get_persistent_artifact_path("layer_blend_mode_test.psd")
 
         image = PsdImage.load(test_file)
         image.layers[0].blend_mode_key = BlendMode.MULTIPLY
@@ -116,24 +85,16 @@ class LayerSectionTests(PsdTestFixtureBase):
         reloaded = PsdImage.load(output_file)
         assert reloaded.layers[0].blend_mode_key == BlendMode.MULTIPLY
 
-        original_bytes = test_file.read_bytes()
-        saved_bytes = output_file.read_bytes()
-        assert self.read_layer_info_length(original_bytes) == self.read_layer_info_length(
-            saved_bytes
-        )
+        original_bytes = open(test_file, "rb").read()
+        saved_bytes = open(output_file, "rb").read()
+        assert self.read_layer_info_length(original_bytes) == self.read_layer_info_length(saved_bytes)
 
     def test_save_changes_clipping(self):
-        test_file = Path(
-            os.path.join(
-                self.test_context.current_context.test_directory,
-                "testdata",
-                "test.psd",
-            )
-        )
-        output_file = self.get_persistent_artifact_path(
-            "layer_clipping_test.psd"
-        )
-        original_bytes = test_file.read_bytes()
+        """Tests that changing a layer's clipping value persists after save and reload."""
+        test_dir = self.get_test_data_directory()
+        test_file = os.path.join(test_dir, "test.psd")
+        output_file = self.get_persistent_artifact_path("layer_clipping_test.psd")
+        original_bytes = open(test_file, "rb").read()
 
         image = PsdImage.load(test_file)
         image.layers[0].clipping = 1
@@ -143,22 +104,14 @@ class LayerSectionTests(PsdTestFixtureBase):
         reloaded = PsdImage.load(output_file)
         assert reloaded.layers[0].clipping == 1
 
-        saved_bytes = output_file.read_bytes()
-        assert self.read_layer_and_mask_tail(original_bytes) == self.read_layer_and_mask_tail(
-            saved_bytes
-        )
+        saved_bytes = open(output_file, "rb").read()
+        assert self.read_layer_and_mask_tail(original_bytes) == self.read_layer_and_mask_tail(saved_bytes)
 
     def test_save_changes_bounds(self):
-        test_file = Path(
-            os.path.join(
-                self.test_context.current_context.test_directory,
-                "testdata",
-                "test.psd",
-            )
-        )
-        output_file = self.get_persistent_artifact_path(
-            "layer_bounds_test.psd"
-        )
+        """Tests that changing a layer's bounds persists after save and reload."""
+        test_dir = self.get_test_data_directory()
+        test_file = os.path.join(test_dir, "test.psd")
+        output_file = self.get_persistent_artifact_path("layer_bounds_test.psd")
 
         image = PsdImage.load(test_file)
         new_bounds = Rectangle.from_left_top_right_bottom(10, 20, 40, 60)
@@ -170,25 +123,17 @@ class LayerSectionTests(PsdTestFixtureBase):
         self.log_artifact_directory(output_file)
 
         reloaded = PsdImage.load(output_file)
-        assert reloaded.layers[0].bounds == Rectangle(
-            0, 0, new_bounds.width, new_bounds.height
-        )
+        assert reloaded.layers[0].bounds == Rectangle(0, 0, new_bounds.width, new_bounds.height)
         assert reloaded.layers[0].left == new_bounds.left
         assert reloaded.layers[0].top == new_bounds.top
         assert reloaded.layers[0].right == new_bounds.right
         assert reloaded.layers[0].bottom == new_bounds.bottom
 
     def test_save_changes_coordinates(self):
-        test_file = Path(
-            os.path.join(
-                self.test_context.current_context.test_directory,
-                "testdata",
-                "test.psd",
-            )
-        )
-        output_file = self.get_persistent_artifact_path(
-            "layer_coordinates_test.psd"
-        )
+        """Tests that changing coordinate properties updates bounds and persists after save and reload."""
+        test_dir = self.get_test_data_directory()
+        test_file = os.path.join(test_dir, "test.psd")
+        output_file = self.get_persistent_artifact_path("layer_coordinates_test.psd")
 
         image = PsdImage.load(test_file)
         layer = image.layers[0]
@@ -207,7 +152,8 @@ class LayerSectionTests(PsdTestFixtureBase):
         assert reloaded.layers[0].bottom == 30
 
     def test_load_psb_layer_record_reads(self):
-        stream = memoryview(self.build_psb_layer_record_bytes())
+        """Tests that a synthetic PSB fixture with one layer record loads expected layer metadata."""
+        stream = BytesIO(self.build_psb_layer_record_bytes())
         reader = BigEndianReader(stream, leave_open=True)
 
         layer = Layer.load(reader, is_large_document=True)
@@ -216,9 +162,3 @@ class LayerSectionTests(PsdTestFixtureBase):
         assert layer.bounds == Rectangle(0, 0, 1, 1)
         assert layer.opacity == 200
         assert layer.is_visible is True
-
-    # Helper methods assumed to exist in the base class or module
-    # write_uint32_big_endian, build_layer_record_bytes_with_extra_data,
-    # read_layer_info_length, read_layer_and_mask_tail,
-    # get_persistent_artifact_path, log_artifact_directory,
-    # build_psb_layer_record_bytes

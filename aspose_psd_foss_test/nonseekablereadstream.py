@@ -1,29 +1,26 @@
 import io
 
-
-class NonSeekableReadStream(io.RawIOBase):
-    """Wraps a readable in-memory stream and intentionally disables seeking."""
+class NonSeekableReadStream(io.BytesIO):
+    _inner_stream = None
 
     def __init__(self, data):
-        """
-        Initializes a new instance of the NonSeekableReadStream class.
-
-        :param data: The bytes exposed by the stream.
-        """
         self._inner_stream = io.BytesIO(data)
 
-    def readable(self):
+    @property
+    def can_read(self):
         return True
 
-    def seekable(self):
+    @property
+    def can_seek(self):
         return False
 
-    def writable(self):
+    @property
+    def can_write(self):
         return False
 
     @property
     def length(self):
-        return len(self._inner_stream.getbuffer())
+        return self._inner_stream.getbuffer().nbytes
 
     @property
     def position(self):
@@ -31,50 +28,28 @@ class NonSeekableReadStream(io.RawIOBase):
 
     @position.setter
     def position(self, value):
-        raise io.UnsupportedOperation()
+        raise NotImplementedError()
 
     def flush(self):
         pass
 
-    def read(self, size=-1):
-        """
-        Reads bytes from the stream.
+    def read(self, buffer, offset, count):
+        self._inner_stream.seek(offset)
+        data = self._inner_stream.read(count)
+        buffer[:len(data)] = data
+        return len(data)
 
-        :param size: The requested byte count. -1 reads to the end.
-        :return: The bytes actually read.
-        """
-        return self._inner_stream.read(size)
+    def seek(self, offset, origin):
+        raise NotImplementedError()
 
-    def seek(self, offset, whence=io.SEEK_SET):
-        """
-        Seeks within the stream.
+    def set_length(self, value):
+        raise NotImplementedError()
 
-        :param offset: The byte offset relative to the origin.
-        :param whence: The reference origin.
-        :return: The new stream position.
-        """
-        raise io.UnsupportedOperation()
-
-    def truncate(self, size=None):
-        """
-        Changes the stream length.
-
-        :param size: The new stream length.
-        """
-        raise io.UnsupportedOperation()
-
-    def write(self, b):
-        """
-        Writes bytes to the stream.
-
-        :param b: The source buffer.
-        """
-        raise io.UnsupportedOperation()
+    def write(self, buffer, offset, count):
+        raise NotImplementedError()
 
     def close(self):
-        """
-        Releases resources used by the wrapped stream.
-        """
-        self._inner_stream.close()
+        if self._inner_stream is not None:
+            self._inner_stream.close()
         super().close()
 

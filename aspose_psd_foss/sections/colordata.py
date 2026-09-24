@@ -53,7 +53,7 @@ class ColorData:
         Gets an empty color data section.
         """
         if cls._empty is None:
-            cls._empty = cls([], PsdColorDataKind.EMPTY)
+            cls._empty = cls([], PsdColorDataKind.NONE)
         return cls._empty
 
     @classmethod
