@@ -1,57 +1,55 @@
-from .layers.layer import Layer
-from .layers.layerrecordwriter import LayerRecordWriter
-from .sections.layerandmasksection import LayerAndMaskSection
-from .bigendianwriter import BigEndianWriter
+import io
+import struct
+from typing import BinaryIO, Optional
 
 
-def save(section, writer, is_large_document):
-    if section.raw_section_bytes and len(section.raw_section_bytes) > 0 \
-            and not section.has_layer_collection_mutated \
-            and not any(layer.has_mutated for layer in section.layers):
-        write_section_length(writer, len(section.raw_section_bytes), is_large_document)
-        writer.write(section.raw_section_bytes)
-        return
+class BigEndianWriter:
+    def __init__(self, stream: BinaryIO, leave_open: bool = False) -> None:
+        self._stream = stream
+        self._leave_open = leave_open
 
-    if len(section.layers) == 0:
-        write_section_length(writer, 0, is_large_document)
-        return
+    def close(self) -> None:
+        if not self._leave_open:
+            self._stream.close()
 
-    write_layer_section_with_mutations(section, writer, is_large_document)
+    def write(self, data: bytes) -> None:
+        self._stream.write(data)
 
+    def write_int16(self, value: int) -> None:
+        self._stream.write(struct.pack(">h", value))
 
-def write_layer_section_with_mutations(section, writer, is_large_document):
-    layer_info_payload_stream = bytearray()
-    layer_info_payload_writer = BigEndianWriter(layer_info_payload_stream, leave_open=True)
-    layer_count = -len(section.layers) if section.layer_count_raw < 0 else len(section.layers)
-    layer_info_payload_writer.write(layer_count)
+    def write_uint16(self, value: int) -> None:
+        self._stream.write(struct.pack(">H", value))
 
-    for layer in section.layers:
-        LayerRecordWriter.write(layer, layer_info_payload_writer, is_large_document)
+    def write_int32(self, value: int) -> None:
+        self._stream.write(struct.pack(">i", value))
 
-    layer_info_payload_writer.write(section.layer_channel_image_data_raw)
-    layer_info_payload = layer_info_payload_stream
+    def write_uint32(self, value: int) -> None:
+        self._stream.write(struct.pack(">I", value))
 
-    section_stream = bytearray()
-    section_writer = BigEndianWriter(section_stream, leave_open=True)
-    if is_large_document:
-        section_writer.write(len(layer_info_payload))
-    else:
-        section_writer.write(len(layer_info_payload))
+    def write_int64(self, value: int) -> None:
+        self._stream.write(struct.pack(">q", value))
 
-    section_writer.write(layer_info_payload)
-    section_writer.write(get_layer_global_mask_and_tail_bytes_for_write(section))
+    def write_uint64(self, value: int) -> None:
+        """Write an unsigned 64‑bit integer in big‑endian order."""
+        self._stream.write(struct.pack(">Q", value))
 
-    section_bytes = section_stream
-    write_section_length(writer, len(section_bytes), is_large_document)
-    writer.write(section_bytes)
+    def write_float(self, value: float) -> None:
+        self._stream.write(struct.pack(">f", value))
 
+    def write_double(self, value: float) -> None:
+        self._stream.write(struct.pack(">d", value))
 
-def get_layer_global_mask_and_tail_bytes_for_write(section):
-    return section.layer_global_mask_and_tail_raw if section.layer_global_mask_and_tail_raw else [0, 0, 0, 0]
+    def write_bytes(self, data: bytes) -> None:
+        self._stream.write(data)
 
+    def flush(self) -> None:
+        self._stream.flush()
 
-def write_section_length(writer, length, is_large_document):
-    if is_large_document:
-        writer.write(length)
-    else:
-        writer.write(length)
+    @property
+    def position(self) -> int:
+        return self._stream.tell()
+
+    @position.setter
+    def position(self, pos: int) -> None:
+        self._stream.seek(pos)

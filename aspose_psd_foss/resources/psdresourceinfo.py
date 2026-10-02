@@ -1,56 +1,53 @@
+from aspose_psd_foss.resources.psdresourcekind import PsdResourceKind
+
+
 class PsdResourceInfo:
-    def __init__(self, resource_id, name, kind, data_length, global_angle=None, is_icc_profile_untagged=None):
-        self.resource_id = resource_id
-        self.name = name
-        self.kind = kind
-        self.data_length = data_length
-        self.global_angle = global_angle
-        self.is_icc_profile_untagged = is_icc_profile_untagged
+    """
+    Provides a read-only summary of one parsed PSD image resource block.
+    """
+
+    def __init__(
+        self,
+        resource_id: int,
+        name: str,
+        kind: PsdResourceKind,
+        data_length: int,
+        global_angle=None,
+        is_icc_profile_untagged=None,
+    ):
+        self._resource_id = resource_id
+        self._name = name
+        self._kind = kind
+        self._data_length = data_length
+        self._global_angle = global_angle
+        self._is_icc_profile_untagged = is_icc_profile_untagged
 
     @property
-    def resource_id(self):
+    def resource_id(self) -> int:
+        """Gets the PSD resource identifier."""
         return self._resource_id
 
-    @resource_id.setter
-    def resource_id(self, value):
-        self._resource_id = value
-
     @property
-    def name(self):
+    def name(self) -> str:
+        """Gets the decoded Pascal resource name."""
         return self._name
 
-    @name.setter
-    def name(self, value):
-        self._name = value
-
     @property
-    def kind(self):
+    def kind(self) -> PsdResourceKind:
+        """Gets the semantic classification exposed for the resource."""
         return self._kind
 
-    @kind.setter
-    def kind(self, value):
-        self._kind = value
-
     @property
-    def data_length(self):
+    def data_length(self) -> int:
+        """Gets the raw payload length in bytes."""
         return self._data_length
-
-    @data_length.setter
-    def data_length(self, value):
-        self._data_length = value
 
     @property
     def global_angle(self):
+        """Gets the parsed global angle, when this resource carries that value."""
         return self._global_angle
-
-    @global_angle.setter
-    def global_angle(self, value):
-        self._global_angle = value
 
     @property
     def is_icc_profile_untagged(self):
+        """Gets the parsed untagged-profile flag, when this resource carries that value."""
         return self._is_icc_profile_untagged
-
-    @is_icc_profile_untagged.setter
-    def is_icc_profile_untagged(self, value):
-        self._is_icc_profile_untagged = value

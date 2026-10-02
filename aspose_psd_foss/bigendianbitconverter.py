@@ -1,23 +1,13 @@
-"""Provides helper methods for reading big-endian primitive values from byte arrays."""
-
-
+# Provides helper methods for reading big-endian primitive values from byte arrays.
 class BigEndianBitConverter:
-    """Helper methods for reading big-endian primitive values from byte arrays."""
+    """Provides helper methods for reading big-endian primitive values from byte arrays."""
 
-    @staticmethod
-    def to_int32(bytes_, offset):
-        """Reads a 32-bit signed integer in big-endian format from the specified byte array.
-
-        Args:
-            bytes_ (bytes or bytearray): The source byte array.
-            offset (int): The zero-based offset of the integer.
-
-        Returns:
-            int: The parsed 32-bit signed integer.
-        """
+    @classmethod
+    def to_int32(cls, byte_array, offset):
+        """Reads a 32-bit signed integer in big-endian format from the specified byte array."""
         return (
-            (bytes_[offset] << 24)
-            | (bytes_[offset + 1] << 16)
-            | (bytes_[offset + 2] << 8)
-            | bytes_[offset + 3]
+            (byte_array[offset] << 24)
+            | (byte_array[offset + 1] << 16)
+            | (byte_array[offset + 2] << 8)
+            | byte_array[offset + 3]
         )

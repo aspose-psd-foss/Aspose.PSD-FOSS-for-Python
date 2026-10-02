@@ -7,7 +7,7 @@ class PsdSectionReader:
     """Provides bounded reads for PSD/PSB sections that are stored in memory by this implementation."""
 
     @classmethod
-    def read_bytes(cls, reader, length, section_name):
+    def read_bytes(cls, reader: BigEndianReader, length: int, section_name: str) -> bytes:
         """Reads a declared section payload after validating stream boundaries and the in-memory size limit.
 
         Args:
@@ -17,12 +17,19 @@ class PsdSectionReader:
 
         Returns:
             The section payload bytes.
+
+        Raises:
+            PsdLoadException: When the declared length cannot be read safely.
         """
         bounded_length = cls.get_memory_backed_length(reader, length, section_name)
-        return [] if bounded_length == 0 else reader.read_bytes(bounded_length)
+        return b'' if bounded_length == 0 else reader.read_bytes(bounded_length)
 
     @classmethod
-    def get_memory_backed_length(cls, reader, length, section_name):
+    def ReadBytes(cls, reader: BigEndianReader, length: int, section_name: str) -> bytes:
+        return cls.read_bytes(reader, length, section_name)
+
+    @classmethod
+    def get_memory_backed_length(cls, reader: BigEndianReader, length: int, section_name: str) -> int:
         """Validates a declared section length and returns the equivalent in-memory array size.
 
         Args:
@@ -34,19 +41,22 @@ class PsdSectionReader:
             The validated length as an int.
 
         Raises:
-            PsdLoadException: Thrown when the declared length cannot be represented or exceeds available bytes.
+            PsdLoadException: When the declared length cannot be represented or exceeds available bytes.
         """
-        if length > sys.maxsize:
-            raise PsdLoadException(f"{section_name} length {length} exceeds the current in-memory parser limit of {sys.maxsize} bytes.")
-
-        remaining = cls.get_remaining_bytes(reader, section_name)
+        max_int = 2**31 - 1
+        if length > max_int:
+            raise PsdLoadException(
+                f"{section_name} length {length} exceeds the current in-memory parser limit of {max_int} bytes."
+            )
+        remaining = cls._get_remaining_bytes(reader, section_name)
         if length > remaining:
-            raise PsdLoadException(f"{section_name} length {length} exceeds the remaining stream data ({remaining} bytes).")
-
+            raise PsdLoadException(
+                f"{section_name} length {length} exceeds the remaining stream data ({remaining} bytes)."
+            )
         return int(length)
 
     @classmethod
-    def validate_signed_length(cls, length, section_name):
+    def validate_signed_length(cls, length: int, section_name: str) -> int:
         """Validates a signed length field that belongs to a bounded section.
 
         Args:
@@ -57,15 +67,20 @@ class PsdSectionReader:
             The non-negative length.
 
         Raises:
-            PsdLoadException: Thrown when the length is negative.
+            PsdLoadException: When the length is negative.
         """
         if length < 0:
             raise PsdLoadException(f"{section_name} length cannot be negative.")
-
         return length
 
     @classmethod
-    def get_nested_memory_backed_length(cls, reader, length, section_end, section_name):
+    def get_nested_memory_backed_length(
+        cls,
+        reader: BigEndianReader,
+        length: int,
+        section_end: int,
+        section_name: str,
+    ) -> int:
         """Validates that a nested payload stays inside the already-bounded enclosing section.
 
         Args:
@@ -78,19 +93,22 @@ class PsdSectionReader:
             The validated length as an int.
 
         Raises:
-            PsdLoadException: Thrown when the nested payload exceeds its enclosing section.
+            PsdLoadException: When the nested payload exceeds its enclosing section.
         """
-        if length > sys.maxsize:
-            raise PsdLoadException(f"{section_name} length {length} exceeds the current in-memory parser limit of {sys.maxsize} bytes.")
-
+        max_int = 2**31 - 1
+        if length > max_int:
+            raise PsdLoadException(
+                f"{section_name} length {length} exceeds the current in-memory parser limit of {max_int} bytes."
+            )
         remaining = section_end - reader.position
         if remaining < 0 or length > remaining:
-            raise PsdLoadException(f"{section_name} length {length} exceeds the enclosing section boundary.")
-
+            raise PsdLoadException(
+                f"{section_name} length {length} exceeds the enclosing section boundary."
+            )
         return int(length)
 
     @classmethod
-    def get_remaining_bytes(cls, reader, section_name):
+    def _get_remaining_bytes(cls, reader: BigEndianReader, section_name: str) -> int:
         """Returns the remaining bytes in a seekable reader stream.
 
         Args:
@@ -101,10 +119,11 @@ class PsdSectionReader:
             The number of remaining bytes.
 
         Raises:
-            PsdLoadException: Thrown when the reader position is outside the stream.
+            PsdLoadException: When the reader position is outside the stream.
         """
         remaining = reader.length - reader.position
         if remaining < 0:
-            raise PsdLoadException(f"{section_name} reader position is beyond the stream length.")
-
-        return remaining
+            raise PsdLoadException(
+                f"{section_name} reader position is beyond the stream length."
+            )
+        return int(remaining)

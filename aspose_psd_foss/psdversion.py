@@ -1,6 +1,6 @@
-class PsdVersion:
-    """
-    Represents the supported PSD container versions.
-    """
-    PSD = 1
-    PSB = 2
+from enum import IntEnum
+
+
+class PsdVersion(IntEnum):
+    Psd = 1
+    Psb = 2

@@ -1,13 +1,12 @@
-from enum import Flag, auto
+from enum import Flag
 
 
 class LayerMaskFlags(Flag):
-    """
-    Defines PSD layer mask flags.
-    """
-    none = 0
-    relative_to_layer = 1
-    disabled = 2
-    inverted_when_blending = 4
-    user_mask_from_rendering_other_data = 8
-    user_or_vector_masks_have_parameters = 16
+    """Defines PSD layer mask flags."""
+
+    NONE = 0
+    RELATIVE_TO_LAYER = 1
+    DISABLED = 2
+    INVERTED_WHEN_BLENDING = 4
+    USER_MASK_FROM_RENDERING_OTHER_DATA = 8
+    USER_OR_VECTOR_MASKS_HAVE_PARAMETERS = 16

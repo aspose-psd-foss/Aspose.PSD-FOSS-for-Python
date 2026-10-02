@@ -1,55 +1,53 @@
-"""Loads parsed PSD/PSB document state from a stream."""
+import io
 
-from aspose_psd_foss.bigendianreader import BigEndianReader, EndOfStreamException
-from ..sections.psdheader import PsdHeader
-from ..sections.colordata import ColorData
-from ..sections.imageresourcessection import ImageResourcesSection
-from ..sections.layerandmasksection import LayerAndMaskSection
-from ..sections.imagedata import ImageData
-from ..sections.psdimagedocumentstate import PsdImageDocumentState
+from aspose_psd_foss.bigendianreader import BigEndianReader
 from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
+from aspose_psd_foss.sections.colordata import ColorData
+from aspose_psd_foss.sections.imagedata import ImageData
+from aspose_psd_foss.sections.imageresourcessection import ImageResourcesSection
+from aspose_psd_foss.sections.layerandmasksection import LayerAndMaskSection
+from aspose_psd_foss.layerandmasksectionreader import LayerAndMaskSectionReader
+from aspose_psd_foss.sections.psdheader import PsdHeader
+from aspose_psd_foss.sections.psdimagedocumentstate import PsdImageDocumentState
 
 
 class PsdImageLoader:
-    """Loads parsed PSD/PSB document state from a stream."""
-
     @classmethod
-    def load(cls, stream, leave_open):
-        """Loads all supported PSD/PSB sections into memory.
-
-        Args:
-            stream: The buffered PSD/PSB stream.
-            leave_open: True to leave the stream open after loading; otherwise, False.
-
-        Returns:
-            The parsed document state.
-        """
+    def load(cls, stream: io.BufferedIOBase, leave_open: bool):
         reader = BigEndianReader(stream, leave_open)
         try:
             header = PsdHeader.load(reader)
             color_data = ColorData.load(reader, header.color_mode)
             image_resources_section = ImageResourcesSection.load(reader)
-            layer_and_mask_section = LayerAndMaskSection.load(reader, header.is_large_document)
+            layer_and_mask_section = LayerAndMaskSectionReader.load(reader, header.is_large_document)
             image_data = ImageData.load(
                 reader,
                 header.is_large_document,
                 header.height,
-                header.channels)
-
+                header.channels,
+            )
             return PsdImageDocumentState(
                 header,
                 color_data,
                 image_resources_section,
                 layer_and_mask_section,
-                image_data)
+                image_data,
+            )
         except PsdLoadException:
             raise
-        except EndOfStreamException as exception:
+        except EOFError as exception:
             raise PsdLoadException(
-                "Unexpected end of PSD/PSB data while reading the file structure.", exception)
-        except OSError as exception:
+                "Unexpected end of PSD/PSB data while reading the file structure.", exception
+            )
+        except IOError as exception:
             raise PsdLoadException(
-                "Failed to read PSD/PSB data from the source stream.", exception)
+                "Failed to read PSD/PSB data from the source stream.", exception
+            )
         finally:
-            reader.close()
+            reader.dispose()
 
+
+# Optional backward‑compatible alias
+ImageLoader = PsdImageLoader
+
+__all__ = ["PsdImageLoader", "ImageLoader"]

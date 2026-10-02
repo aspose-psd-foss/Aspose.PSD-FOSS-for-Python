@@ -1,13 +1,8 @@
-"""Represents global layer mask information."""
-
-from typing import ClassVar
-
-
+# Represents global layer mask information.
 class GlobalLayerMaskInfo:
-    """Represents global layer mask information."""
-    Empty: ClassVar['GlobalLayerMaskInfo']
+    Empty: GlobalLayerMaskInfo = GlobalLayerMaskInfo()
 
-
-# Empty global layer mask info instance
-GlobalLayerMaskInfo.Empty = GlobalLayerMaskInfo()
+    @classmethod
+    def empty(cls):
+        return cls()
 

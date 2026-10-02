@@ -1,20 +1,15 @@
-from copy import deepcopy
-from typing import List, Tuple
-
 class IndexedColorPaletteInfo:
-    """
-    Provides a read-only view over an indexed-color PSD palette.
-    """
+    """Provides a read-only view over an indexed-color PSD palette."""
 
-    def __init__(self, entries: List[Tuple[int, int, int, int]]):
+    def __init__(self, entries):
+        """Initializes a new instance of IndexedColorPaletteInfo.
+
+        Args:
+            entries: The decoded palette entries.
         """
-        Initializes a new instance of the IndexedColorPaletteInfo class.
-        """
-        self._entries = deepcopy(entries)
+        self._entries = tuple(entries)
 
     @property
-    def entries(self) -> List[Tuple[int, int, int, int]]:
-        """
-        Gets the decoded palette entries.
-        """
+    def entries(self):
+        """Gets the decoded palette entries."""
         return self._entries

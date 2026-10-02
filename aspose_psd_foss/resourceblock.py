@@ -1,96 +1,77 @@
+from __future__ import annotations
+
+import abc
 from abc import ABC, abstractmethod
-from aspose_psd_foss.streamcontainer import StreamContainer
+from enum import Enum, auto
 
 
 class ResourceBlock(ABC):
     """
     Represents a PSD image resource block.
     """
-
-    #: The regular Photoshop resource signature.
+    # The regular Photoshop resource signature.
     RESOURCE_BLOCK_SIGNATURE = 0x3842494D
-
-    #: The ImageReady resource signature.
-    RESOURCE_BLOCK_ME_SA_SIGNATURE = 0x3842494D
+    # The ImageReady resource signature.
+    RESOURCE_BLOCK_MESA_SIGNATURE = 0x3842494D
 
     def __init__(self):
-        self._id = 0
-        self._name = ""
+        # Gets or sets the unique identifier for the resource.
+        self.id: int = 0
+        # Gets or sets the resource name.
+        self.name: str = ""
 
     @property
     @abstractmethod
-    def data_size(self):
+    def data_size(self) -> int:
         """
         Gets the resource data size in bytes.
         """
-        pass
-
-    @property
-    def id(self):
-        """
-        Gets or sets the unique identifier for the resource.
-        """
-        return self._id
-
-    @id.setter
-    def id(self, value):
-        self._id = value
+        ...
 
     @property
     @abstractmethod
-    def minimal_version(self):
+    def minimal_version(self) -> int:
         """
         Gets the minimal required PSD version.
         """
-        pass
+        ...
 
     @property
-    def name(self):
-        """
-        Gets or sets the resource name.
-        """
-        return self._name
-
-    @name.setter
-    def name(self, value):
-        self._name = value
-
-    @property
-    def signature(self):
+    def signature(self) -> int:
         """
         Gets the resource signature.
         """
         return self.RESOURCE_BLOCK_SIGNATURE
 
     @property
-    def size(self):
+    def size(self) -> int:
         """
         Gets the resource block size in bytes including its data.
         """
         return self.data_size
 
     @abstractmethod
-    def save(self, stream):
+    def save(self, stream) -> None:
         """
         Saves the resource block to the specified stream container.
-        
+
         :param stream: The stream container to save to.
         """
-        pass
+        # Local import to avoid circular dependencies
+        from aspose_psd_foss.streamcontainer import StreamContainer
+        ...
 
-    def validate_values(self):
+    def validate_values(self) -> None:
         """
         Validates the resource values.
         """
         pass
 
-    class ResourceBlockState:
-        """
-        Represents resource block state.
-        """
 
-        #: The resource block is ready.
-        READY = 0
+class ResourceBlockState(Enum):
+    """
+    Represents resource block state.
+    """
+    READY = auto()
+    DISPOSED = auto()
 
-        #: The resource block is disposed.
-        DISPOSED = 1

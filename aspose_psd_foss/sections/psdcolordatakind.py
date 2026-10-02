@@ -1,9 +1,10 @@
-from enum import Enum, auto
+import enum
 
 
-class PsdColorDataKind(Enum):
-    NONE = auto()
-    INDEXED_PALETTE = auto()
-    RGB_PAYLOAD = auto()
-    CMYK_PAYLOAD = auto()
-    RAW_PRESERVED = auto()
+class PsdColorDataKind(enum.Enum):
+    """Describes how the Color Mode Data payload was interpreted for the loaded document."""
+    NONE = 0
+    INDEXED_PALETTE = 1
+    RGB_PAYLOAD = 2
+    CMYK_PAYLOAD = 3
+    RAW_PRESERVED = 4

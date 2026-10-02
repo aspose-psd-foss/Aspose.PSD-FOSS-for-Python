@@ -1,36 +1,29 @@
-class LayerResource:
-    """Represents a PSD layer resource."""
+from abc import ABC, abstractmethod
+from aspose_psd_foss.streamcontainer import StreamContainer
 
+
+class LayerResource(ABC):
     RESOURCE_SIGNATURE = 0x3842494D
-    """The common layer resource signature."""
-
     PSB_RESOURCE_SIGNATURE = 0x38425053
-    """The PSB-specific layer resource signature."""
 
     @property
-    def key(self):
-        """Gets the layer resource key."""
-        raise NotImplementedError()
+    @abstractmethod
+    def key(self) -> int:
+        ...
 
     @property
-    def length(self):
-        """Gets the layer resource length in bytes."""
-        raise NotImplementedError()
+    @abstractmethod
+    def length(self) -> int:
+        ...
 
     @property
-    def psd_version(self):
-        """Gets the minimal PSD version required for the layer resource."""
+    def psd_version(self) -> int:
         return 0
 
     @property
-    def signature(self):
-        """Gets the layer resource signature."""
-        return LayerResource.RESOURCE_SIGNATURE
+    def signature(self) -> int:
+        return self.RESOURCE_SIGNATURE
 
-    def save(self, stream_container, psd_version):
-        """Saves the layer resource to the specified stream container.
-
-        :param stream_container: The stream container to save to.
-        :param psd_version: The PSD version.
-        """
-        raise NotImplementedError()
+    @abstractmethod
+    def save(self, stream_container: StreamContainer, psd_version: int) -> None:
+        ...

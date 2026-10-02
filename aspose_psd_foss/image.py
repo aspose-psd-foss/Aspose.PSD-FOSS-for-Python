@@ -1,63 +1,101 @@
+from __future__ import annotations
+import io
+import os
+from typing import Union
 from abc import ABC, abstractmethod
-from aspose_psd_foss.rectangle import Rectangle
-from aspose_psd_foss.psdimage import PsdImage
-
 
 class Image(ABC):
-    """Provides the Aspose.PSD-compatible base image entry point for loading PSD/PSB documents."""
-
-    @property
+    """
+    Abstract base class for image objects.
+    Concrete image implementations should inherit from this class
+    and implement the required interface.
+    """
     @abstractmethod
-    def width(self):
-        """Gets the image width in pixels."""
+    def some_method(self):
+        """Placeholder abstract method for concrete implementations."""
         pass
 
-    @property
-    @abstractmethod
-    def height(self):
-        """Gets the image height in pixels."""
-        pass
-
-    @property
-    def bounds(self):
-        """Gets the image bounds."""
-        return Rectangle(0, 0, self.width, self.height)
-
-    @classmethod
-    def load(cls, file_path):
-        """Loads a new image from the specified file path.
-
-        :param file_path: The file path to load image from.
-        :return: The loaded image.
+    @staticmethod
+    def Load(source: Union[str, io.BytesIO, io.BufferedIOBase]) -> "Image":
         """
-        return PsdImage.load(file_path)
+        Load an image using the ImageLoader factory.
 
-    @classmethod
-    def load_stream(cls, stream):
-        """Loads a new image from the specified stream.
+        Parameters
+        ----------
+        source : str or io.BytesIO or io.BufferedIOBase
+            Path to the image file or a binary stream containing image data.
 
-        :param stream: The stream to load image from.
-        :return: The loaded image.
+        Returns
+        -------
+        Image
+            An instance of a subclass of `Image` representing the loaded image.
         """
-        return PsdImage.load_stream(stream)
+        return ImageLoader.load(source)
 
-    @abstractmethod
-    def save(self, file_path):
-        """Saves the image data to the specified file path.
-
-        :param file_path: The destination file path.
+class ImageLoader:
+    """
+    Factory class responsible for loading images from file paths or streams.
+    The `load` method inspects the source type and dispatches to the appropriate
+    concrete Image subclass. Currently only a generic placeholder implementation
+    is provided; extend it with actual image format handling as needed.
+    """
+    @staticmethod
+    def load(source: Union[str, io.BytesIO, io.BufferedIOBase]) -> "Image":
         """
-        pass
+        Load an image from a file path or a binary stream.
 
-    @abstractmethod
-    def save_stream(self, stream):
-        """Saves the image data to the specified stream.
+        Parameters
+        ----------
+        source : str or io.BytesIO or io.BufferedIOBase
+            Path to the image file or a binary stream containing image data.
 
-        :param stream: The destination stream.
+        Returns
+        -------
+        Image
+            An instance of a subclass of `Image` representing the loaded image.
+
+        Raises
+        ------
+        FileNotFoundError
+            If a file path is provided but the file does not exist.
+        NotImplementedError
+            If the loader does not recognize the format or the concrete
+            Image subclass is not implemented.
         """
-        pass
+        # Handle file path strings
+        if isinstance(source, str):
+            if not os.path.isfile(source):
+                raise FileNotFoundError(f"Image file not found: {source}")
 
-    @abstractmethod
-    def dispose(self):
-        """Releases resources used by the image."""
-        pass
+            # Determine format by file extension (simple heuristic)
+            _, ext = os.path.splitext(source)
+            ext = ext.lower()
+
+            # Dispatch to concrete loaders based on extension.
+            # Replace the following placeholders with actual implementations.
+            if ext in {".psd"}:
+                # return PsdImage.load(source)
+                raise NotImplementedError("PSD image loading not implemented.")
+            elif ext in {".png"}:
+                # return PngImage.load(source)
+                raise NotImplementedError("PNG image loading not implemented.")
+            elif ext in {".jpg", ".jpeg"}:
+                # return JpegImage.load(source)
+                raise NotImplementedError("JPEG image loading not implemented.")
+            else:
+                raise NotImplementedError(f"Unsupported image format: {ext}")
+
+        # Handle binary streams (BytesIO, BufferedIOBase, etc.)
+        elif isinstance(source, (io.BytesIO, io.BufferedIOBase)):
+            # Peek at the first few bytes to guess format if needed.
+            # This is a placeholder; actual implementation should inspect the stream.
+            raise NotImplementedError("Loading from streams is not implemented yet.")
+
+        else:
+            raise TypeError("source must be a file path string or a binary stream")
+
+# Optional convenience alias if external code expects a factory called ImageFactory
+ImageFactory = ImageLoader
+
+# Export the Image, ImageLoader, and ImageFactory classes when using `from .image import *`
+__all__ = ["Image", "ImageLoader", "ImageFactory"]

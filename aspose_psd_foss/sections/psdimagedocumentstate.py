@@ -1,118 +1,84 @@
-from aspose_psd_foss.sections.colordata import ColorData, PsdColorDataKind as ColorDataKind
-from aspose_psd_foss.sections.imagedata import ImageData
-from ..compressionmethod import CompressionMethod
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from aspose_psd_foss.sections.psdheader import PsdHeader
+from aspose_psd_foss.sections.colordata import ColorData
 from aspose_psd_foss.sections.imageresourcessection import ImageResourcesSection
 from aspose_psd_foss.sections.layerandmasksection import LayerAndMaskSection
-from aspose_psd_foss.sections.psdheader import PsdHeader
-from .imagedatastructure import ImageDataStructure
+from aspose_psd_foss.sections.imagedata import ImageData, ImageDataStructure
+from aspose_psd_foss.compressionmethod import CompressionMethod
+
+if TYPE_CHECKING:
+    from aspose_psd_foss.sections.layerandmasksection import LayerAndMaskSection
 
 
 class PsdImageDocumentState:
-    """
-    Stores parsed PSD/PSB document sections used by :py:class:`PsdImage`.
-    """
+    """Stores parsed PSD/PSB document sections used by PsdImage."""
 
-    Empty = None  # type: PsdImageDocumentState
+    Empty: "PsdImageDocumentState"
 
-    def __init__(self, header, color_data, image_resources_section, layer_and_mask_section, image_data):
-        """
-        Initializes a new instance of the :py:class:`PsdImageDocumentState` class.
+    @classmethod
+    def empty(cls) -> "PsdImageDocumentState":
+        """Gets an empty document state before a PSD/PSB stream has been parsed."""
+        return cls(
+            None,
+            ColorData.empty(),
+            ImageResourcesSection.empty(),
+            LayerAndMaskSection.empty(),
+            ImageData(
+                CompressionMethod.Raw,
+                b"",               # empty bytes for raw image data
+                structure=ImageDataStructure.create_raw(0)
+            ),
+        )
 
-        :param header: The parsed PSD/PSB header.
-        :type header: PsdHeader or None
-        :param color_data: The parsed Color Mode Data section.
-        :type color_data: ColorData
-        :param image_resources_section: The parsed Image Resources section.
-        :type image_resources_section: ImageResourcesSection
-        :param layer_and_mask_section: The parsed Layer and Mask Information section.
-        :type layer_and_mask_section: LayerAndMaskSection
-        :param image_data: The parsed merged Image Data section.
-        :type image_data: ImageData
-        """
-        self._header = header
-        self._color_data = color_data
-        self._image_resources_section = image_resources_section
+    def __init__(
+        self,
+        header: PsdHeader | None,
+        color_data: ColorData,
+        image_resources_section: ImageResourcesSection,
+        layer_and_mask_section: LayerAndMaskSection,
+        image_data: ImageData,
+    ) -> None:
+        self.header = header
+        self.color_data = color_data
+        self.image_resources_section = image_resources_section
         self._layer_and_mask_section = layer_and_mask_section
-        self._image_data = image_data
+        self.image_data = image_data
 
     @property
-    def header(self):
-        """
-        Gets the parsed PSD/PSB header.
-
-        :return: The parsed PSD/PSB header.
-        :rtype: PsdHeader or None
-        """
-        return self._header
+    def Header(self) -> PsdHeader | None:
+        return self.header
 
     @property
-    def color_data(self):
-        """
-        Gets the parsed Color Mode Data section.
-
-        :return: The parsed Color Mode Data section.
-        :rtype: ColorData
-        """
-        return self._color_data
+    def ColorData(self) -> ColorData:
+        return self.color_data
 
     @property
-    def image_resources_section(self):
-        """
-        Gets the parsed and raw-preserved Image Resources section.
-
-        :return: The parsed and raw-preserved Image Resources section.
-        :rtype: ImageResourcesSection
-        """
-        return self._image_resources_section
+    def ImageResourcesSection(self) -> ImageResourcesSection:
+        return self.image_resources_section
 
     @property
-    def layer_and_mask_section(self):
-        """
-        Gets the parsed and raw-preserved Layer and Mask Information section.
-
-        :return: The parsed and raw-preserved Layer and Mask Information section.
-        :rtype: LayerAndMaskSection
-        """
+    def layer_and_mask_section(self) -> LayerAndMaskSection:
         return self._layer_and_mask_section
 
     @property
-    def image_data(self):
-        """
-        Gets the parsed merged Image Data section.
+    def ImageData(self) -> ImageData:
+        return self.image_data
 
-        :return: The parsed merged Image Data section.
-        :rtype: ImageData
-        """
-        return self._image_data
-
-    def with_layer_and_mask_section(self, layer_and_mask_section):
-        """
-        Creates a state copy with a replaced Layer and Mask Information section.
-
-        :param layer_and_mask_section: The replacement Layer and Mask Information section.
-        :type layer_and_mask_section: LayerAndMaskSection
-        :return: The updated document state.
-        :rtype: PsdImageDocumentState
-        """
+    def with_layer_and_mask_section(
+        self, layer_and_mask_section: LayerAndMaskSection
+    ) -> "PsdImageDocumentState":
+        """Creates a state copy with a replaced Layer and Mask Information section."""
         return PsdImageDocumentState(
-            self._header,
-            self._color_data,
-            self._image_resources_section,
+            self.header,
+            self.color_data,
+            self.image_resources_section,
             layer_and_mask_section,
-            self._image_data)
+            self.image_data,
+        )
 
 
-# Initialize Empty static field
-PsdImageDocumentState.Empty = PsdImageDocumentState(
-    None,
-    ColorData(raw_data=b"", kind=ColorDataKind(0)),
-    ImageResourcesSection.Empty,
-    LayerAndMaskSection.Empty,
-    ImageData(CompressionMethod.RAW, b"", structure=ImageDataStructure(
-        kind=0,
-        row_length_field_size=0,
-        row_byte_counts=[],
-        compressed_payload_length=0,
-        uses_prediction=False
-    ))
-)
+PsdImageDocumentState.Empty = PsdImageDocumentState.empty()
+
