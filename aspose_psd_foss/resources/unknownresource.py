@@ -1,4 +1,7 @@
 # Represents a parsed PSD image resource block without any ID‑specific semantics.
+from aspose_psd_foss.bigendianreader import BigEndianReader
+
+
 class UnknownResource:
     """Initializes a new instance of the UnknownResource class.
 
@@ -40,7 +43,7 @@ class UnknownResource:
         return self._data
 
     @classmethod
-    def load(cls, reader, section_end):
+    def load(cls, reader: BigEndianReader, section_end):
         """Attempts to load one resource block from the reader.
 
         Args:
@@ -50,24 +53,24 @@ class UnknownResource:
         Returns:
             An UnknownResource instance or None if parsing cannot continue safely.
         """
-        start_pos = reader.Position
+        start_pos = reader.position
         if start_pos + 8 > section_end:
             return None
 
-        signature = reader.ReadUInt32()
+        signature = reader.read_uint32()
         if signature != 0x3842494D:  # "8BIM"
             return None
 
-        resource_id = reader.ReadInt16()
-        name = reader.ReadPascalStringAlignedTo2()
+        resource_id = reader.read_int16()
+        name = reader.read_pascal_string_aligned_to2()
 
-        data_length = reader.ReadInt32()
-        if data_length < 0 or reader.Position + data_length > section_end:
+        data_length = reader.read_int32()
+        if data_length < 0 or reader.position + data_length > section_end:
             return None
 
-        data = reader.ReadBytes(data_length)
+        data = reader.read_bytes(data_length)
         if data_length % 2 == 1:
-            reader.Skip(1)
+            reader.skip(1)
 
         return cls(resource_id, name, data)
 
@@ -86,7 +89,7 @@ class UnknownResource:
         return PsdResourceInfo(
             self.resource_id,
             self.name,
-            PsdResourceKind.Unknown,
+            PsdResourceKind.UNKNOWN,
             len(self.data),
             None,
             None,

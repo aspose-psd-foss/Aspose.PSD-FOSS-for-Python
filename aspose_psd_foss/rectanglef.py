@@ -5,7 +5,7 @@ from typing import Any, Optional, ClassVar
 class RectangleF:
     """Stores a set of four floating-point numbers that represent the location and size of a rectangle."""
 
-    Empty: ClassVar["RectangleF"] = RectangleF()
+    #Empty: ClassVar["RectangleF"] = RectangleF()
 
     def __init__(self, x: float = 0.0, y: float = 0.0, width: float = 0.0, height: float = 0.0):
         self.x = x
@@ -107,5 +107,5 @@ class RectangleF:
 
 
 # Initialize the static readonly Empty field
-RectangleF.Empty = RectangleF()
+#RectangleF.Empty = RectangleF()
 

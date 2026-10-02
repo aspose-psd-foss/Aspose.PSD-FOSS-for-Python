@@ -5,8 +5,6 @@ from typing import Any
 
 from aspose_psd_foss.rectangle import Rectangle
 from aspose_psd_foss.layers.layermaskflags import LayerMaskFlags
-from .layermaskdatashort import LayerMaskDataShort
-
 
 class LayerMaskData(ABC):
     """

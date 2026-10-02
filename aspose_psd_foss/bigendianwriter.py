@@ -8,6 +8,13 @@ class BigEndianWriter:
         self._leave_open = leave_open
         self._disposed = False
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.dispose()
+        return False  # Don't suppress exceptions
+
     @property
     def position(self):
         return self._stream.tell()
@@ -114,4 +121,3 @@ class BigEndianWriter:
         self._disposed = True
         if not self._leave_open:
             self._stream.close()
-

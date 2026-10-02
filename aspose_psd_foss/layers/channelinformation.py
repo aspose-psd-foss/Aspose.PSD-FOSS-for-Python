@@ -47,7 +47,7 @@ class ChannelInformation:
         return obj
 
     @classmethod
-    def from_layer_channel_info(cls, channel_info):
+    def from_layer_channel_info(cls, channel_info: LayerChannelInfo):
         """
         Creates public channel information from the internal layer channel metadata.
 
@@ -56,11 +56,11 @@ class ChannelInformation:
         """
         max_int = 0x7FFFFFFF
         length = (
-            channel_info.DataLength
-            if channel_info.DataLength <= max_int
+            channel_info.data_length
+            if channel_info.data_length <= max_int
             else max_int
         )
-        return cls._create_internal(channel_info.ChannelId, length)
+        return cls._create_internal(channel_info.channel_id, length)
 
     @classmethod
     def _get_header_length(cls, psd_version):

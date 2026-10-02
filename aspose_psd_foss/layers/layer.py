@@ -4,6 +4,7 @@ from typing import List, Optional
 
 from ..bigendianreader import BigEndianReader
 from ..bigendianwriter import BigEndianWriter
+from ..coreexceptions.notsupportedexception import NotSupportedException
 from ..rectangle import Rectangle
 from .blendmode import BlendMode
 from .layerblendmodemapper import LayerBlendModeMapper
@@ -12,8 +13,6 @@ from .layerblendingrangesinfo import LayerBlendingRangesInfo
 from .layermaskdatashort import LayerMaskDataShort
 from .layermaskinfo import LayerMaskInfo
 from .layerrawdata import LayerRawData
-from .layerrecordreader import LayerRecordReader
-from .layerrecordwriter import LayerRecordWriter
 from .channelinformation import ChannelInformation
 from .psdlayerchannelinfo import PsdLayerChannelInfo
 
@@ -175,7 +174,7 @@ class Layer:
 
     @channel_information.setter
     def channel_information(self, value):
-        raise NotImplementedError(
+        raise NotSupportedException(
             "Changing layer channel information is not supported by this FOSS build."
         )
 
@@ -238,7 +237,7 @@ class Layer:
 
     @layer_mask_data.setter
     def layer_mask_data(self, value):
-        raise NotImplementedError(
+        raise NotSupportedException(
             "Changing layer mask data is not supported by this FOSS build."
         )
 
@@ -250,7 +249,7 @@ class Layer:
 
     @layer_blending_ranges_data.setter
     def layer_blending_ranges_data(self, value):
-        raise NotImplementedError(
+        raise NotSupportedException(
             "Changing layer blending ranges data is not supported by this FOSS build."
         )
 
@@ -283,9 +282,11 @@ class Layer:
 
     @classmethod
     def load(cls, reader: BigEndianReader, is_large_document: bool) -> "Layer":
+        from .layerrecordreader import LayerRecordReader
         return LayerRecordReader.load(reader, is_large_document)
 
     def write(self, writer: BigEndianWriter, is_large_document: bool) -> None:
+        from .layerrecordwriter import LayerRecordWriter
         LayerRecordWriter.write(self, writer, is_large_document)
 
     @classmethod

@@ -2,7 +2,8 @@ import io
 import struct
 from typing import Union
 
-from coreexceptions.psdloadexception import PsdLoadException
+from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
+
 
 class BigEndianReader:
     """
