@@ -56,11 +56,11 @@ class ImageData:
         Creates a read‑only public summary of the parsed merged image data structure.
         """
         return PsdImageDataInfo(
-            self.structure.Kind,
-            self.structure.RowLengthFieldSize,
-            self.structure.RowByteCounts,
-            self.structure.CompressedPayloadLength,
-            self.structure.UsesPrediction,
+            self.structure.kind,
+            self.structure.row_length_field_size,
+            self.structure.row_byte_counts,
+            self.structure.compressed_payload_length,
+            self.structure.uses_prediction,
         )
 
     @classmethod

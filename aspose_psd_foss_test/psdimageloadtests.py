@@ -1,28 +1,28 @@
-import os
 import io
+from pathlib import Path
+
 import pytest
 
-from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
+from aspose_psd_foss.coreexceptions.argumentnullexception import ArgumentNullException
+from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
 from aspose_psd_foss.psdimage import PsdImage
 from aspose_psd_foss.colormodes import ColorModes
+from aspose_psd_foss.layers.blendmode import BlendMode
 from aspose_psd_foss.compressionmethod import CompressionMethod
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.rectangle import Rectangle
 from aspose_psd_foss.sections.imagedatakind import ImageDataKind
 from aspose_psd_foss.sections.psdheader import PsdHeader
-from aspose_psd_foss.layers.blendmode import BlendMode
-from aspose_psd_foss_test.nonseekablereadstream import NonSeekableReadStream
-from aspose_psd_foss.bigendianreader import BigEndianReader
-from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
-from aspose_psd_foss.coreexceptions.argumentnullexception import ArgumentNullException
-from aspose_psd_foss.rectangle import Rectangle
+from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
 
 
-class TestPsdImageLoadTests(PsdTestFixtureBase):
-    def test_load_document_reads_properties(self):
-        test_file = os.path.join(self._test_dir, "testdata", "test.psd")
-        assert os.path.isfile(test_file), "Test file not found"
+class TestPsdImageLoad(PsdTestFixtureBase):
+    def test_load_document_readsproperties(self):
+        test_file = self.get_test_data_path("test.psd")
 
-        image = PsdImage.load(test_file)
-        try:
+        assert Path(test_file).exists(), "Test file not found"
+
+        with PsdImage.load(test_file) as image:
             assert image.width > 0
             assert image.height > 0
             assert image.channels > 0
@@ -30,14 +30,13 @@ class TestPsdImageLoadTests(PsdTestFixtureBase):
             assert image.color_mode == ColorModes.RGB
             assert 0 < image.version <= 6
             assert len(image.layers) > 0
-        finally:
-            image.close()
 
-    def test_load_layer_reads_properties(self):
-        test_file = os.path.join(self._test_dir, "testdata", "test.psd")
-        image = PsdImage.load(test_file)
-        try:
+    def test_load_layer_readsproperties(self):
+        test_file = self.get_test_data_path("test.psd")
+
+        with PsdImage.load(test_file) as image:
             assert len(image.layers) > 0
+
             first_layer = image.layers[0]
 
             assert first_layer.name == "Background copy"
@@ -47,72 +46,54 @@ class TestPsdImageLoadTests(PsdTestFixtureBase):
             assert first_layer.blend_mode_key == BlendMode.NORMAL
 
             assert image.layers[1].name == "Pattern Fill 1"
-        finally:
-            image.close()
 
     def test_load_layers_indexable(self):
-        test_file = os.path.join(self._test_dir, "testdata", "test.psd")
-        image = PsdImage.load(test_file)
-        try:
+        test_file = self.get_test_data_path("test.psd")
+
+        with PsdImage.load(test_file) as image:
             assert image.layers[0] is not None
             assert image.layers[1] is not None
-        finally:
-            image.close()
 
-    def test_load_seekable_preserves_position(self):
-        test_path = os.path.join(self._test_dir, "testdata", "test.psd")
-        with open(test_path, "rb") as f:
-            bytes_data = f.read()
+    def test_load_seekable_preservesposition(self):
+        bytes_data = Path(self.get_test_data_path("test.psd")).read_bytes()
         prefix = bytes([1, 2, 3, 4, 5])
         stream = io.BytesIO()
         stream.write(prefix)
         stream.write(bytes_data)
         stream.seek(len(prefix))
 
-        image = PsdImage.load(stream)
-        try:
+        with PsdImage.load(stream) as image:
             assert stream.tell() == len(prefix)
             assert image.width > 0
-        finally:
-            image.close()
 
-    def test_load_non_seekable_stream_succeeds(self):
-        test_path = os.path.join(self._test_dir, "testdata", "test.psd")
-        with open(test_path, "rb") as f:
-            bytes_data = f.read()
-        stream = NonSeekableReadStream(bytes_data)
-        image = PsdImage.load(stream)
-        try:
-            assert image.width > 0
-            assert len(image.layers) > 0
-        finally:
-            image.close()
+    def test_load_nonseekablestream_succeeds(self):
+        bytes_data = Path(self.get_test_data_path("test.psd")).read_bytes()
+        with self._non_seekable_read_stream(bytes_data) as stream:
+            with PsdImage.load(stream) as image:
+                assert image.width > 0
+                assert len(image.layers) > 0
 
-    def test_load_null_stream_throws(self):
+    def test_load_nullstream_throws(self):
         with pytest.raises(ArgumentNullException):
             PsdImage.load(None)
 
-    def test_load_missing_file_throws(self):
-        missing_file = os.path.join(self._test_dir, "missing.psd")
+    def test_load_missingfile_throws(self):
+        missing_file = "missing.psd"
         with pytest.raises(FileNotFoundError):
-            PsdImage.load(missing_file)
+            PsdImage.load(str(missing_file))
 
-    def test_load_invalid_signature_throws(self):
-        header_bytes = self.build_header_bytes(PsdHeader.PSD_VERSION)
-        stream = io.BytesIO(header_bytes)
-        # Corrupt the first byte to make the signature invalid
-        stream.seek(0)
-        stream.write(b'B')
-        stream.seek(0)
+    def test_load_invalidsignature_throws(self):
+        with io.BytesIO(self._build_header_bytes(PsdHeader.PSD_VERSION)) as stream:
+            with BigEndianReader(stream, leave_open=True) as reader:
+                stream.seek(0)
+                stream.write(b"B")
+                stream.seek(0)
 
-        reader = BigEndianReader(stream, leave_open=True)
-        with pytest.raises(PsdLoadException):
-            PsdHeader.load(reader)
+                with pytest.raises(PsdLoadException):
+                    PsdHeader.load(reader)
 
-    def test_load_doc_inspection_reads(self):
-        test_file = os.path.join(self._test_dir, "testdata", "test.psd")
-        image = PsdImage.load(test_file)
-        try:
+    def test_load_docinspection_reads(self):
+        with PsdImage.load(self.get_test_data_path("test.psd")) as image:
             assert image.header is not None
             assert image.is_large_document is False
             assert image.is_psb is False
@@ -127,6 +108,22 @@ class TestPsdImageLoadTests(PsdTestFixtureBase):
             assert image.version == 6
             assert image.header.version == PsdHeader.PSD_VERSION
             assert image.header.color_mode == image.color_mode
-        finally:
-            image.close()
 
+    # --- helpers ---
+
+    @staticmethod
+    def _build_header_bytes(version: int) -> bytes:
+        ...
+
+    class _non_seekable_read_stream:
+        def __init__(self, data: bytes):
+            self._buffer = io.BytesIO(data)
+
+        def read(self, size: int = -1) -> bytes:
+            return self._buffer.read(size)
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            self._buffer.close()

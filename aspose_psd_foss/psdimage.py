@@ -11,6 +11,7 @@ from typing import List, Optional
 
 from aspose_psd_foss.colormodes import ColorModes
 from aspose_psd_foss.compressionmethod import CompressionMethod
+from aspose_psd_foss.coreexceptions.argumentnullexception import ArgumentNullException
 from aspose_psd_foss.coreexceptions.notsupportedexception import NotSupportedException
 from aspose_psd_foss.image import Image
 from aspose_psd_foss.layers.globallayermaskinfo import GlobalLayerMaskInfo
@@ -290,7 +291,7 @@ class PsdImage(Image):
     # -- Loading ------------------------------------------------------------
 
     @staticmethod
-    def load(file_path_or_stream):
+    def load(file_path_or_stream) -> PsdImage:
         """
         Loads a PSD image from a file path or a readable stream.
 
@@ -307,7 +308,7 @@ class PsdImage(Image):
 
         stream = file_path_or_stream
         if stream is None:
-            raise ValueError("stream must not be None")
+            raise ArgumentNullException("stream must not be None")
         return PsdImage._load_from_stream(stream)
 
     @staticmethod

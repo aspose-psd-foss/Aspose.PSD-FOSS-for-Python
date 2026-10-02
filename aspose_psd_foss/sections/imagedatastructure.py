@@ -19,33 +19,38 @@ class ImageDataStructure:
         self._uses_prediction = uses_prediction
 
     @property
-    def Kind(self):
+    def kind(self):
         return self._kind
 
     @property
-    def RowLengthFieldSize(self):
+    def row_length_field_size(self):
         return self._row_length_field_size
 
     @property
-    def RowByteCounts(self):
+    def row_byte_counts(self):
         return self._row_byte_counts
 
     @property
-    def CompressedPayloadLength(self):
+    def compressed_payload_length(self):
         return self._compressed_payload_length
 
     @property
-    def UsesPrediction(self):
+    def uses_prediction(self):
         return self._uses_prediction
 
     @classmethod
     def create_raw(cls, payload_length):
-        """Creates a structure descriptor for raw image data."""
+        """Create a structure descriptor for raw image data."""
         return cls(ImageDataKind.RAW, 0, [], payload_length, False)
 
     @classmethod
-    def create_rle(cls, row_byte_counts, row_length_field_size, compressed_payload_length):
-        """Creates a structure descriptor for RLE image data."""
+    def create_rle(
+        cls,
+        row_byte_counts,
+        row_length_field_size,
+        compressed_payload_length,
+    ):
+        """Create a structure descriptor for RLE image data."""
         return cls(
             ImageDataKind.RLE,
             row_length_field_size,
@@ -56,10 +61,10 @@ class ImageDataStructure:
 
     @classmethod
     def create_zip(cls, payload_length, uses_prediction):
-        """Creates a structure descriptor for ZIP‑based image data."""
+        """Create a structure descriptor for ZIP-based image data."""
         return cls(ImageDataKind.ZIP, 0, [], payload_length, uses_prediction)
 
     @classmethod
     def create_unknown(cls, payload_length):
-        """Creates a structure descriptor for unsupported compression values."""
+        """Create a structure descriptor for unsupported compression values."""
         return cls(ImageDataKind.UNKNOWN, 0, [], payload_length, False)
