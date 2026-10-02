@@ -27,7 +27,7 @@ class PsdImageDocumentState:
             ImageResourcesSection.empty(),
             LayerAndMaskSection.empty(),
             ImageData(
-                CompressionMethod.Raw,
+                CompressionMethod.RAW,
                 b"",               # empty bytes for raw image data
                 structure=ImageDataStructure.create_raw(0)
             ),

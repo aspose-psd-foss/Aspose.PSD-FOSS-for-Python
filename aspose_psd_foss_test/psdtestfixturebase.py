@@ -165,7 +165,7 @@ class PsdTestFixtureBase:
         height: int = 1,
         bit_depth: int = 8,
         color_mode: ColorModes = ColorModes.RGB
-    ) -> bytes:
+    ) -> bytearray:
         """
         Builds a minimal PSD or PSB header byte sequence for parser-boundary tests.
 
@@ -189,7 +189,7 @@ class PsdTestFixtureBase:
         writer.write_ushort(bit_depth)
         writer.write_ushort(int(color_mode))
 
-        return stream.getvalue()
+        return bytearray(stream.getvalue())
 
     @classmethod
     def build_color_data_section(cls, payload: bytes) -> bytes:

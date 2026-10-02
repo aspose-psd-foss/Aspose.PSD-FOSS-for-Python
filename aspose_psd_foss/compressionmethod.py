@@ -1,16 +1,17 @@
-from enum import Enum
+from enum import IntEnum
 
-class CompressionMethod(Enum):
+
+class CompressionMethod(IntEnum):
     """Defines the compression methods used for image data in PSD files."""
 
     #: Raw (uncompressed) data.
-    Raw = 0
+    RAW = 0
 
     #: RLE (Run-Length Encoded) compression.
     RLE = 1
 
     #: ZIP (lossless) compression.
-    ZipWithoutPrediction = 2
+    ZIP_WITHOUT_PREDICTION = 2
 
     #: ZIP compression with prediction.
-    ZipWithPrediction = 3
+    ZIP_WITH_PREDICTION = 3

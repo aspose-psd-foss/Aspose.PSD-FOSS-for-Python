@@ -31,6 +31,9 @@ class BigEndianWriter:
         else:
             raise TypeError("Unsupported type for write")
 
+    def write_byte(self, bytevalue):
+        self.write_bytes(bytes([bytevalue]))
+
     def write_bytes(self, buffer, offset=0, count=None):
         if count is None:
             count = len(buffer) - offset

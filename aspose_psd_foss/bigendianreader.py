@@ -1,9 +1,15 @@
 import io
 import struct
+from enum import IntEnum
 from typing import Union
 
 from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
 
+class SeekOrigin(IntEnum):
+    """Defines seek origin for reader."""
+    BEGIN = 0
+    CUR = 1
+    END = 2
 
 class BigEndianReader:
     """

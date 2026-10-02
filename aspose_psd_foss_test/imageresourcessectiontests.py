@@ -3,18 +3,20 @@ import pathlib
 
 import pytest
 
+from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.psdimage import PsdImage
+from aspose_psd_foss.resources.imageresourceids import ImageResourceIds
+from aspose_psd_foss.resources.psdresourcekind import PsdResourceKind
+from aspose_psd_foss.resources.unknownresource import UnknownResource
 from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
-from aspose_psd_foss import ImageResourceIds, PsdImage, PsdResourceKind
-from aspose_psd_foss.resources import UnknownResource
-from aspose_psd_foss import BigEndianReader
 
 
 class TestImageResourcesSection(PsdTestFixtureBase):
     def test_load_resources_reads_blocks(self):
         resources_payload = self.build_resources_payload(
-            (ImageResourceIds.GLOBAL_ANGLE, "glba", [0x00, 0x00, 0x00, 0x2D]),
-            (ImageResourceIds.ICC_PROFILE, "icc", [0x49, 0x43, 0x43, 0x50]),
-            (ImageResourceIds.ICC_UNTAGGED_PROFILE, "", [0x01]),
+            (ImageResourceIds.GLOBAL_ANGLE, "glba", bytes([0x00, 0x00, 0x00, 0x2D])),
+            (ImageResourceIds.ICC_PROFILE, "icc", bytes([0x49, 0x43, 0x43, 0x50])),
+            (ImageResourceIds.ICC_UNTAGGED_PROFILE, "", bytes([0x01])),
         )
         stream = io.BytesIO(resources_payload)
         reader = BigEndianReader(stream, leave_open=True)
