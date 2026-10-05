@@ -73,7 +73,7 @@ class LayerAndMaskSectionWriter:
         section_writer = BigEndianWriter(section_stream, leave_open=True)
         try:
             if is_large_document:
-                section_writer.write_int64(len(layer_info_payload))
+                section_writer.write_long(len(layer_info_payload))
             else:
                 section_writer.write_int32(len(layer_info_payload))
 
@@ -114,6 +114,6 @@ class LayerAndMaskSectionWriter:
         :param is_large_document: true to write an 8-byte PSB length; otherwise, false.
         """
         if is_large_document:
-            writer.write_uint64(length)
+            writer.write_ulong(length)
         else:
             writer.write_uint32(length)

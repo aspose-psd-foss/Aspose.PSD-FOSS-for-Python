@@ -37,7 +37,7 @@ class TestImageResourcesSection(PsdTestFixtureBase):
         assert resources[2].data == bytes([0x01])
 
     def test_save_resources_preserves_raw(self):
-        test_file = pathlib.Path(self.test_context.current_dir) / "testdata" / "test.psd"
+        test_file = pathlib.Path(self.get_test_data_path("test.psd")) #pathlib.Path(self.test_context.current_dir) / "testdata" / "test.psd"
         original_bytes = test_file.read_bytes()
         output_file = pathlib.Path(
             self.get_persistent_artifact_path("resources_roundtrip_test.psd")

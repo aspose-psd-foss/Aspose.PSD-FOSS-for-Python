@@ -4,7 +4,7 @@ from aspose_psd_foss.psdimage import PsdImage
 from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
 
 
-class TestPsdImageSaveTests(PsdTestFixtureBase):
+class TestPsdImagesaveTests(PsdTestFixtureBase):
     def test_save_roundtrip_loads_again(self):
         test_file = os.path.join(os.path.dirname(__file__), "testdata", "test.psd")
         output_file = self.get_persistent_artifact_path("roundtrip_test.psd")
@@ -22,9 +22,9 @@ class TestPsdImageSaveTests(PsdTestFixtureBase):
             assert image2.height == image1.height
             assert image2.channels == image1.channels
             assert image2.bits_per_channel == image1.bits_per_channel
-            assert len(image2.Layers) == original_length
-            if len(image2.Layers) > 0:
-                assert image2.Layers[0].Name == original_layer_name
+            assert len(image2.layers) == original_length
+            if len(image2.layers) > 0:
+                assert image2.layers[0].name == original_layer_name
 
         # Dispose the original image if a close/dispose method exists
         if hasattr(image1, "close"):
@@ -40,7 +40,7 @@ class TestPsdImageSaveTests(PsdTestFixtureBase):
             original_bytes = f.read()
 
         with PsdImage.load(test_file) as image:
-            image.Save(output_file)
+            image.save(output_file)
             self.log_artifact_directory(output_file)
 
         with open(output_file, "rb") as f:
@@ -61,59 +61,59 @@ class TestPsdImageSaveTests(PsdTestFixtureBase):
         output_file = self.get_persistent_artifact_path("layer_name_test.psd")
 
         with PsdImage.load(test_file) as image:
-            assert len(image.Layers) > 0
+            assert len(image.layers) > 0
 
-            original_name = image.Layers[0].Name
-            image.Layers[0].Name = "Test Layer Name"
+            original_name = image.layers[0].name
+            image.layers[0].name = "Test Layer name"
 
-            image.Save(output_file)
+            image.save(output_file)
             self.log_artifact_directory(output_file)
 
         with PsdImage.load(output_file) as reloaded:
-            assert reloaded.Layers[0].Name == "Test Layer Name"
+            assert reloaded.layers[0].name == "Test Layer name"
 
     def test_save_changes_layer_visibility(self):
         test_file = os.path.join(os.path.dirname(__file__), "testdata", "test.psd")
         output_file = self.get_persistent_artifact_path("layer_visible_test.psd")
 
         with PsdImage.load(test_file) as image:
-            assert len(image.Layers) > 0
+            assert len(image.layers) > 0
 
-            original_visible = image.Layers[0].IsVisible
+            original_visible = image.layers[0].IsVisible
             image.layers[0].is_visible = not original_visible
 
-            image.Save(output_file)
+            image.save(output_file)
             self.log_artifact_directory(output_file)
 
         with PsdImage.load(output_file) as reloaded:
-            assert reloaded.Layers[0].IsVisible == (not original_visible)
+            assert reloaded.layers[0].IsVisible == (not original_visible)
 
     def test_save_changes_layer_opacity(self):
         test_file = os.path.join(os.path.dirname(__file__), "testdata", "test.psd")
         output_file = self.get_persistent_artifact_path("layer_opacity_test.psd")
 
         with PsdImage.load(test_file) as image:
-            assert len(image.Layers) > 0
+            assert len(image.layers) > 0
 
-            original_opacity = image.Layers[0].Opacity
+            original_opacity = image.layers[0].opacity
             new_opacity = max(0, original_opacity - 50)
-            image.Layers[0].Opacity = new_opacity
+            image.layers[0].opacity = new_opacity
 
-            image.Save(output_file)
+            image.save(output_file)
             self.log_artifact_directory(output_file)
 
         with PsdImage.load(output_file) as reloaded:
-            assert reloaded.Layers[0].Opacity == new_opacity
+            assert reloaded.layers[0].opacity == new_opacity
 
     def test_save_mutation_preserves_flags(self):
         test_file = os.path.join(os.path.dirname(__file__), "testdata", "test.psd")
         output_file = self.get_persistent_artifact_path("preserve_flags_and_blend.psd")
 
         with PsdImage.load(test_file) as image:
-            image.Layers[0].Name = "Renamed"
-            image.Save(output_file)
+            image.layers[0].name = "Renamed"
+            image.save(output_file)
             self.log_artifact_directory(output_file)
 
         with PsdImage.load(output_file) as reloaded:
-            assert reloaded.Layers[0].RawBlendModeKey == "norm"
-            assert reloaded.Layers[0].IsVisible is True
+            assert reloaded.layers[0].raw_blend_mode_key == "norm"
+            assert reloaded.layers[0].IsVisible is True

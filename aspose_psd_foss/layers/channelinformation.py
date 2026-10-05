@@ -42,7 +42,7 @@ class ChannelInformation:
         """
         obj = cls.__new__(cls)
         obj._channel_id = channel_id
-        obj.compression_method = CompressionMethod.Raw
+        obj.compression_method = CompressionMethod.RAW
         obj.length = length
         return obj
 

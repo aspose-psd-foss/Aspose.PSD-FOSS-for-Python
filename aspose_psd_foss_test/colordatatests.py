@@ -5,6 +5,7 @@ from aspose_psd_foss.coreexceptions.psdloadexception import PsdLoadException
 from aspose_psd_foss.psdimage import PsdImage
 from aspose_psd_foss.colormodes import ColorModes
 from aspose_psd_foss.bigendianreader import BigEndianReader
+from aspose_psd_foss.resources.indexedcolorpalette import IndexedColorPalette
 from aspose_psd_foss.sections.colordata import ColorData
 from aspose_psd_foss.sections.psdcolordatakind import PsdColorDataKind
 from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
@@ -89,13 +90,9 @@ class TestColorData(PsdTestFixtureBase):
 
     @staticmethod
     def _build_indexed_palette_payload() -> bytes:
-        payload = bytearray(768)
-        # Entry 0: RGB (0x00, 0xFF, 0x80)
-        payload[0] = 0x00
-        payload[1] = 0xFF
-        payload[2] = 0x80
-        # Entry 17: RGB (0x11, 0xEE, 0x91)
-        payload[17 * 3] = 0x11
-        payload[17 * 3 + 1] = 0xEE
-        payload[17 * 3 + 2] = 0x91
+        payload = bytearray(IndexedColorPalette.EXPECTED_RAW_LENGTH)
+        for i in range(256):
+            payload[i] = i
+            payload[i + 256] = 255 - i
+            payload[i + 512] = 128 + (i % 64)
         return bytes(payload)

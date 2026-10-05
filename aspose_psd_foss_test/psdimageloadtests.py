@@ -1,4 +1,5 @@
 import io
+import struct
 from pathlib import Path
 
 import pytest
@@ -112,8 +113,25 @@ class TestPsdImageLoad(PsdTestFixtureBase):
     # --- helpers ---
 
     @staticmethod
-    def _build_header_bytes(version: int) -> bytes:
-        ...
+    def _build_header_bytes(
+            version,
+            channels=3,
+            width=1,
+            height=1,
+            bit_depth=8,
+            color_mode=ColorModes.RGB,
+    ):
+        # Big-endian: '>' prefix
+        return (
+                b"8BPS"
+                + struct.pack(">H", version)  # ushort version
+                + b"\x00" * 6  # 6 reserved bytes
+                + struct.pack(">H", channels)  # ushort channels
+                + struct.pack(">I", height)  # int height
+                + struct.pack(">I", width)  # int width
+                + struct.pack(">H", bit_depth)  # ushort bitDepth
+                + struct.pack(">H", int(color_mode))  # ushort colorMode
+        )
 
     class _non_seekable_read_stream:
         def __init__(self, data: bytes):
