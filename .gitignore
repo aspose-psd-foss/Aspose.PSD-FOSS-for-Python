@@ -190,3 +190,5 @@ aspose_psd_foss_test/artifacts/
 
 # Bak files
 *.bak
+build.ps1
+pyproject.toml
