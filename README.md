@@ -140,11 +140,25 @@ with PsdImage.load("sample.psd") as img:
 ### Verify byte-exact round-trip  
 
 ```python
-from aspose_psd_foss_test.psdtestfixturebase import PsdTestFixtureBase
+with open(input_path, "rb") as f:
+    input_bytes = f.read()
 
-class TestRoundTrip(PsdTestFixtureBase):
-    def test_roundtrip(self):
-        self.assert_byte_exact_round_trip("test.psd")
+    input_stream = io.BytesIO(input_bytes)
+    original_position = input_stream.tell()
+    image = Image.load(input_stream)  # type: PsdImage
+
+    print("Aspose.PSD Stream Sample")
+    print(f"Input: {input_path}")
+    print(f"Output: {output_path}")
+    print(f"InputBytes: {input_byte_count}")
+    print(f"OriginalStreamPosition: {original_position}")
+    print(f"StreamPositionAfterLoad: {current_position}")
+
+    output_stream = io.BytesIO()
+    image.save(output_stream)
+    output_bytes = output_stream.getvalue()
+    with open(output_path, "wb") as f:
+        f.write(output_bytes)
 ```  
 
 ## API Reference  
