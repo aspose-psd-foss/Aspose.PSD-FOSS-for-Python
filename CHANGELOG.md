@@ -1,1 +1,1 @@
-Initial release. Please check Release Nots
+Initial release. Please check Release Notes
