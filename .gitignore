@@ -182,4 +182,11 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 # idea folder, uncomment if you don't need it
-# .idea
+.idea
+
+# Output artifacts
+src/aspose_psd_foss_test/artifacts/
+aspose_psd_foss_test/artifacts/
+
+# Bak files
+*.bak

@@ -15,9 +15,9 @@ class InspectionDtoTests(PsdTestFixtureBase):
         image = PsdImage.load(image_path)
 
         assert len(image.resources) == 26
-        assert image.resources[0].kind == PsdResourceKind.Unknown
-        assert image.resources[1].kind == PsdResourceKind.Unknown
-        assert image.resources[2].kind == PsdResourceKind.Unknown
+        assert image.resources[0].kind == PsdResourceKind.UNKNOWN
+        assert image.resources[1].kind == PsdResourceKind.UNKNOWN
+        assert image.resources[2].kind == PsdResourceKind.UNKNOWN
         assert image.resources[0].global_angle is None
         assert image.resources[1].global_angle is None
         assert image.resources[2].global_angle is None
