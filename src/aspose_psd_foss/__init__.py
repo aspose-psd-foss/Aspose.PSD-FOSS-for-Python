@@ -15,7 +15,6 @@ from aspose_psd_foss import rectangle
 from aspose_psd_foss import rectanglef
 from aspose_psd_foss import resourceblock
 from aspose_psd_foss import size
-from aspose_psd_foss import src
 from aspose_psd_foss import streamcontainer
 
 from aspose_psd_foss.bigendianbitconverter import (BigEndianBitConverter,)
@@ -49,4 +48,4 @@ __all__ = ['BigEndianBitConverter', 'BigEndianReader', 'BigEndianWriter',
            'compressionmethod', 'image', 'imageloader',
            'layerandmasksectionreader', 'layerandmasksectionwriter', 'point',
            'psdimage', 'psdsectionreader', 'psdversion', 'rectangle',
-           'rectanglef', 'resourceblock', 'size', 'src', 'streamcontainer']
+           'rectanglef', 'resourceblock', 'size', 'streamcontainer']
